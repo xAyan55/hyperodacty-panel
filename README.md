@@ -66,17 +66,17 @@ The installer handles Node.js, Docker, database setup, build, and systemd servic
 Manage with systemd:
 
 ```bash
-systemctl start airlink-panel
-systemctl stop airlink-panel
-systemctl restart airlink-panel
-journalctl -u airlink-panel -f
+systemctl start hyperodactyl-panel
+systemctl stop hyperodactyl-panel
+systemctl restart hyperodactyl-panel
+journalctl -u hyperodactyl-panel -f
 ```
 
 ### Option 2: Manual
 
 ```bash
 cd /var/www/
-git clone https://github.com/xAyan55/hyperodacty-panel.git
+git clone https://github.com/xAyan55/hyperodacty-panel.git panel
 cd panel
 
 chown -R www-data:www-data /var/www/panel
@@ -97,7 +97,7 @@ pnpm run start
 
 ```bash
 npm install -g pm2
-pm2 start "pnpm run start" --name airlink-panel
+pm2 start "pnpm run start" --name hyperodactyl-panel
 pm2 save
 pm2 startup
 ```
