@@ -1,0 +1,79 @@
+<%- include('../../components/header', { title: 'Dashboard' }) %>
+
+<main class="h-screen m-auto">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="hidden lg:block w-60 h-full">
+      <%- include('../../components/template') %>
+    </div>
+
+    <!-- Content -->
+    <div id="page-content" class="flex-1 overflow-y-auto pt-16 pb-12">
+      <%- include('../../components/ui/breadcrumb', { items: [
+        { label: 'Admin' },
+        { label: 'Nodes', href: '/admin/nodes' },
+        { label: 'Stats' }
+      ] }) %>
+      <div class="al-page-header">
+        <h1 class="al-page-title"><%= req.translations.adminNodesTitle %></h1>
+        <p class="al-page-desc"><%= req.translations.adminNodesText %></p>
+      </div>
+      <div class="mt-4 sm:flex-none">
+        <button onclick="location.href='/admin/nodes'" type="button" class="al-btn-secondary">
+          <%- icon('arrow-left', { class: 'size-4', strokeWidth: 1.5 }) %>
+          Back
+        </button>
+      </div>
+
+      <div id="stats" class="grid grid-cols-1 md:grid-cols-2 gap-6 m-8">
+        <div class="al-card p-5">
+            <h2 class="al-section-title mb-2">Status</h2>
+            <%
+            const lastStat = stats.totalStats && stats.totalStats.length ? stats.totalStats.at(-1) : null;
+            const isOnline = lastStat && (new Date() - new Date(lastStat.timestamp)) <= 10 * 1000;
+            %>
+            <p class="text-4xl font-normal" style="color:<%= isOnline ? 'var(--theme-success)' : 'var(--theme-danger)' %>">
+                <%= isOnline ? 'Online' : 'Offline' %>
+            </p>
+            <p class="al-page-desc mt-2">
+                Last Update: <%= lastStat ? new Date(lastStat.timestamp).toLocaleTimeString() : 'N/A' %>
+            </p>
+        </div>
+
+        <div class="al-card p-5">
+        <h2 class="al-section-title mb-2">Uptime</h2>
+        <p class="text-4xl font-normal" style="color:var(--theme-text-strong)">
+            <%= isOnline ? stats.uptime : 'N/A' %> 
+        </p>
+        <% if (!isOnline) { %>
+            <p class="al-page-desc mt-2">System is offline, uptime unavailable</p>
+        <% } else { %>
+            <p class="al-page-desc mt-2">System has been running since last start</p>
+        <% } %>
+        </div>
+      
+      </div>
+
+      <div id="charts" class="grid grid-cols-1 md:grid-cols-2 gap-6 m-8">
+        <div class="al-card p-6">
+          <h2 class="al-section-title mb-4">RAM Usage</h2>
+          <canvas id="ramChart" class="w-full h-64"></canvas>
+        </div>
+
+        <div class="al-card p-6">
+          <h2 class="al-section-title mb-4">CPU Usage</h2>
+          <canvas id="cpuChart" class="w-full h-64"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script nonce="<%- nonce %>" src="/vendor/chartjs/chart.umd.js"></script>
+
+<div id="page-data" style="display:none" data-stats="<%- JSON.stringify(stats.totalStats || []) %>"></div>
+
+<script nonce="<%- nonce %>" src="/javascript/admin/admin-node-stats.js?v=5"></script>
+
+<%- include('../../components/footer') %>

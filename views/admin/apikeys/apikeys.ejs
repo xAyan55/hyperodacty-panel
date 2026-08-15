@@ -1,0 +1,756 @@
+<%- include('../../components/header', { title: 'API Keys Management' }) %>
+
+<style>
+  .category-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.15s ease;
+    opacity: 0;
+  }
+  .category-panel.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .category-panel > div {
+    overflow: hidden;
+    min-height: 0;
+  }
+</style>
+
+<main class="min-h-screen">
+  <div class="flex min-h-screen">
+    <div class="hidden lg:block w-60 shrink-0">
+      <%- include('../../components/template') %>
+    </div>
+    <div id="page-content" class="flex-1 overflow-y-auto pt-16 pb-12">
+      <%- include('../../components/ui/breadcrumb', { items: [
+        { label: 'Admin' },
+        { label: 'API Keys' }
+      ] }) %>
+      <div class="al-page-header flex items-start justify-between gap-4">
+        <div>
+          <h1 class="al-page-title"><%= req.translations.apiKeysManagement || 'API Keys Management' %></h1>
+          <p class="al-page-desc"><%= req.translations.apiKeysDesc || 'Create and manage API keys with specific permissions' %></p>
+        </div>
+        <div class="flex gap-2 shrink-0">
+          <button id="createApiKeyBtn" type="button" class="al-btn-primary"><%- icon('plus', { class: 'size-4', strokeWidth: 1.5 }) %><%= req.translations.createApiKey || 'Create API Key' %></button>
+          <a href="/admin/api/docs" class="al-btn-secondary"><%= req.translations.apiDocs || 'API Documentation' %></a>
+        </div>
+      </div>
+      <div class="al-page-body space-y-3">
+        <% if (apiKeys.length === 0) { %>
+          <div class="flex flex-col items-center justify-center py-24 text-center al-card">
+            <p class="text-sm" style="color:var(--theme-text-muted)"><%= req.translations.noApiKeys || 'No API keys yet. The robots can\'t connect without them.' %></p>
+          </div>
+        <% } else { %>
+          <% apiKeys.forEach(apiKey => { %>
+            <div class="al-card p-5" data-api-key-id="<%= apiKey.id %>">
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-3 mb-1">
+                    <span class="text-sm font-medium api-key-name" style="color:var(--theme-text-strong)"><%= apiKey.name %></span>
+                    <% if (apiKey.active) { %>
+                      <span class="api-key-status-badge inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset" style="background:var(--theme-success-bg);color:var(--theme-success);--tw-ring-color:color-mix(in srgb, var(--theme-success) 25%, transparent);"><%= req.translations.apiKeyActive || 'Active' %></span>
+                    <% } else { %>
+                      <span class="api-key-status-badge inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset" style="background:var(--theme-danger-bg);color:var(--theme-danger);--tw-ring-color:color-mix(in srgb, var(--theme-danger) 25%, transparent);"><%= req.translations.apiKeyInactive || 'Inactive' %></span>
+                    <% } %>
+                  </div>
+                  <% if (apiKey.description) { %>
+                    <p class="text-xs api-key-desc" style="color:var(--theme-text-muted)"><%= apiKey.description %></p>
+                  <% } %>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" onclick="showEditModal(<%- JSON.stringify(apiKey.id) %>, <%- JSON.stringify(apiKey.name) %>, <%- JSON.stringify(apiKey.description || '') %>, <%= apiKey.permissions %>)"
+                    class="w-8 h-8 flex items-center justify-center rounded-lg transition hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white" style="color:var(--theme-text-muted)"
+                    aria-label="Edit API key">
+                    <%- icon('pencil', { size: 16, class: 'shrink-0' }) %>
+                  </button>
+                  <form id="toggleKeyForm_<%= apiKey.id %>" action="/admin/apikeys/toggle/<%= apiKey.id %>" method="POST" class="inline">
+                    <%- include('../../components/csrf') %>
+                    <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg transition" style="color:var(--theme-text-muted)" aria-label="<%= apiKey.active ? 'Disable API key' : 'Enable API key' %>">
+                      <% if (apiKey.active) { %>
+                        <%- icon('x-circle', { size: 16, class: 'shrink-0' }) %>
+                      <% } else { %>
+                        <%- icon('check-circle', { size: 16, class: 'shrink-0' }) %>
+                      <% } %>
+                    </button>
+                  </form>
+                  <form id="deleteKeyForm_<%= apiKey.id %>" action="/admin/apikeys/delete/<%= apiKey.id %>" method="POST" class="inline">
+                    <%- include('../../components/csrf') %>
+                    <button type="button" onclick="confirmDeleteApiKey('<%= apiKey.id %>')" class="w-9 h-9 flex items-center justify-center rounded-lg transition" style="color:var(--theme-danger)" aria-label="Delete API key">
+                      <%- icon('trash-2', { size: 16, class: 'shrink-0' }) %>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <div class="mt-3 flex items-center gap-3 rounded-lg px-3 py-2" style="background:var(--theme-bg-secondary); border:1px solid var(--theme-border)">
+                <code class="flex-1 text-xs font-mono truncate" style="color:var(--theme-text-muted)"><%= apiKey.key.substring(0, 12) %>••••••••••••</code>
+                <button  onclick="copyToClipboard('<%= apiKey.key %>')" type="button"
+                  class="text-[11px] font-medium px-2 py-1 rounded-md transition hover:bg-neutral-200 dark:hover:bg-neutral-700 inline-flex items-center gap-1.5" style="color:var(--theme-text-muted); background:var(--theme-bg-card); border:1px solid var(--theme-border)">
+                  <%- icon('copy', { class: 'size-3', strokeWidth: 1.5 }) %>
+                  Copy
+                </button>
+              </div>
+              <div class="mt-2 flex items-center gap-3 text-xs" style="color:var(--theme-text-muted)">
+                <span><%= req.translations.apiKeyCreatedBy || 'Created by' %> <span class="font-medium" style="color:var(--theme-text-strong)"><%= apiKey.user ? apiKey.user.username : 'System' %></span></span>
+                <span>·</span>
+                <span><%= new Date(apiKey.createdAt).toLocaleDateString() %></span>
+              </div>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<div id="createApiKeyModal" class="al-sheet-overlay fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto" aria-hidden="true">
+  <div class="fixed inset-0 bg-transparent" aria-hidden="true" onclick="hideCreateModal()"></div>
+  <div id="createApiKeyPanel" class="al-sheet-panel relative my-auto mx-4 rounded-2xl shadow-xl w-full max-w-2xl" role="dialog" aria-modal="true" aria-labelledby="createApiKeyTitle" aria-describedby="createApiKeyDescription" tabindex="-1" style="background:var(--theme-bg-card); border-color:var(--theme-border);">
+
+      <div class="flex justify-between items-center px-6 py-4 border-b" style="border-color:var(--theme-border);">
+        <div>
+          <h3 id="createApiKeyTitle" class="text-sm font-semibold" style="color:var(--theme-text-strong);"><%= req.translations.createNewApiKey || 'Create API Key' %></h3>
+          <p id="createApiKeyDescription" class="text-xs mt-0.5" style="color:var(--theme-text-muted);">Set a name and choose what this key is allowed to do.</p>
+        </div>
+        <button type="button" onclick="hideCreateModal()" class="al-btn-ghost p-2 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0" style="color:var(--theme-text-muted);" aria-label="Close">
+          <%- icon('x', { class: 'h-5 w-5', strokeWidth: 1.5 }) %>
+        </button>
+      </div>
+
+      <form id="createApiKeyForm" action="/admin/apikeys/create" method="POST" class="px-6 py-4 space-y-5">
+        <%- include('../../components/csrf') %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="name" class="block text-xs font-medium mb-1.5" style="color:var(--theme-text-muted);"><%= req.translations.apiKeyName || 'Name' %></label>
+            <input type="text" name="name" id="name" required
+              class="block w-full rounded-xl px-3 py-2 text-sm bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder:text-neutral-500 dark:placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 transition"
+              placeholder="<%= req.translations.apiKeyNamePlaceholder || 'My API Key' %>">
+          </div>
+          <div>
+            <label for="description" class="block text-xs font-medium mb-1.5" style="color:var(--theme-text-muted);"><%= req.translations.apiKeyDescriptionLabel || 'Description' %> <span style="color:var(--theme-text-placeholder);" class="font-normal">(optional)</span></label>
+            <input type="text" name="description" id="description"
+              class="block w-full rounded-xl px-3 py-2 text-sm bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder:text-neutral-500 dark:placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-500 transition"
+              placeholder="What is this key used for?">
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-medium mb-2" style="color:var(--theme-text-muted);">Presets</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-preset="full-admin"
+              class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-150 active:scale-95 inline-flex items-center gap-1.5">
+              <%- icon('shield', { class: 'size-3', strokeWidth: 1.5 }) %>
+              Full Admin
+            </button>
+            <button type="button" data-preset="read-only"
+              class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-150 active:scale-95 inline-flex items-center gap-1.5">
+              <%- icon('eye', { class: 'size-3', strokeWidth: 1.5 }) %>
+              Read-Only
+            </button>
+            <button type="button" data-preset="server-manager"
+              class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-150 active:scale-95 inline-flex items-center gap-1.5">
+              <%- icon('server', { class: 'size-3', strokeWidth: 1.5 }) %>
+              Server Manager
+            </button>
+            <button type="button" data-preset="user-manager"
+              class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-150 active:scale-95 inline-flex items-center gap-1.5">
+              <%- icon('user', { class: 'size-3', strokeWidth: 1.5 }) %>
+              User Manager
+            </button>
+            <button type="button" data-preset="node-monitor"
+              class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-150 active:scale-95 inline-flex items-center gap-1.5">
+              <%- icon('monitor', { class: 'size-3', strokeWidth: 1.5 }) %>
+              Node Monitor
+            </button>
+            <button type="button" data-preset="none"
+              class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-150 active:scale-95 inline-flex items-center gap-1.5">
+              <%- icon('x', { class: 'size-3', strokeWidth: 1.5 }) %>
+              Clear All
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-medium mb-2" style="color:var(--theme-text-muted);">Permissions</p>
+          <div class="space-y-2 max-h-64 overflow-y-auto pr-1">
+            <% ['servers', 'users', 'nodes', 'settings'].forEach(category => { %>
+              <div class="rounded-xl border border-neutral-200 dark:border-neutral-700/60 overflow-hidden">
+                <button type="button"
+                  class="category-toggle w-full flex items-center justify-between px-4 py-2.5 text-left bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700/60 transition-colors duration-150"
+                  aria-expanded="false"
+                  onclick="toggleCategory(this)">
+                  <div class="flex items-center gap-2">
+                    <% if (category === 'servers') { %>
+                      <%- icon('server', { size: 16, class: 'text-neutral-500 dark:text-neutral-400 shrink-0' }) %>
+                    <% } else if (category === 'users') { %>
+                      <%- icon('user', { size: 16, class: 'text-neutral-500 dark:text-neutral-400 shrink-0' }) %>
+                    <% } else if (category === 'nodes') { %>
+                      <%- icon('hard-drive', { size: 16, class: 'text-neutral-500 dark:text-neutral-400 shrink-0' }) %>
+                    <% } else { %>
+                      <%- icon('key', { size: 16, class: 'text-neutral-500 dark:text-neutral-400 shrink-0' }) %>
+                    <% } %>
+                    <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 capitalize"><%= category %></span>
+                    <span class="category-count text-[10px] text-neutral-400 dark:text-neutral-400" data-category="<%= category %>">0 selected</span>
+                  </div>
+                  <%- icon('chevron-down', { size: 14, class: 'category-chevron text-neutral-400 transition-transform duration-200 shrink-0' }) %>
+                </button>
+                <div class="category-panel hidden bg-white dark:bg-neutral-900">
+                  <div class="px-4 py-3 border-t border-neutral-200 dark:border-neutral-700/60">
+                  <div class="grid grid-cols-2 gap-2">
+                    <% allPermissions.filter(p => p.value.includes(category)).forEach(permission => { %>
+                      <label class="permission-label flex items-center gap-2 px-3 py-2 rounded-lg border border-neutral-100 dark:border-neutral-700/40 bg-neutral-50 dark:bg-neutral-800/50 cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-150 has-[:checked]:border-neutral-900 dark:has-[:checked]:border-white/30 has-[:checked]:bg-neutral-900 dark:has-[:checked]:bg-white/10">
+                        <input type="checkbox" name="permissions" value="<%= permission.value %>"
+                          class="permission-checkbox h-3.5 w-3.5 rounded shrink-0" data-category="<%= category %>"
+                          onchange="updateCategoryCount('<%= category %>')">
+                        <span class="permission-label-text text-xs text-neutral-600 dark:text-neutral-300"><%= permission.name.split(' - ')[1] || permission.name %></span>
+                      </label>
+                    <% }); %>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <div class="flex gap-2 py-4 border-t justify-end" style="border-color:var(--theme-border);">
+          <button type="button" onclick="hideCreateModal()"
+            class="px-4 py-2 text-xs font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition active:scale-95 inline-flex items-center gap-2">
+            <%- icon('x', { class: 'size-3', strokeWidth: 1.5 }) %>
+            Cancel
+          </button>
+          <button type="submit"
+            class="px-4 py-2 text-xs font-medium rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition active:scale-95 inline-flex items-center gap-2">
+            <%- icon('plus', { class: 'size-3', strokeWidth: 1.5 }) %>
+            Create API key
+          </button>
+        </div>
+
+      </form>
+    </div>
+</div>
+
+
+<div id="editApiKeyModal" class="al-sheet-overlay fixed inset-0 z-50 hidden items-center justify-center" aria-hidden="true">
+  <div class="absolute inset-0 bg-transparent" id="editApiKeyModalBackdrop"></div>
+  <div id="editApiKeyModalPanel" role="dialog" aria-modal="true" aria-labelledby="editApiKeyTitle" aria-describedby="editApiKeyDescription" tabindex="-1" class="al-sheet-panel relative rounded-2xl shadow-xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col" style="background:var(--theme-bg-card); border-color:var(--theme-border);">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center px-6 py-4 border-b shrink-0" style="border-color:var(--theme-border);">
+      <div>
+        <p id="editApiKeyTitle" class="text-sm font-semibold" style="color:var(--theme-text-strong);"><%= req.translations.editApiKey || 'Edit API Key' %></p>
+        <p id="editApiKeyDescription" class="text-xs mt-0.5" style="color:var(--theme-text-muted);">Update name, description, and permissions.</p>
+      </div>
+      <button type="button" onclick="hideEditModal()" class="al-btn-ghost p-2 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0" style="color:var(--theme-text-muted);" aria-label="Close">
+        <%- icon('x', { class: 'h-5 w-5', strokeWidth: 1.5 }) %>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <form id="editApiKeyForm" action="/admin/apikeys/edit/0" method="POST" class="flex flex-col min-h-0 flex-1">
+      <%- include('../../components/csrf') %>
+      <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4 space-y-4">
+
+        <!-- Name + description -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium mb-1" style="color:var(--theme-text-muted);"><%= req.translations.apiKeyName || 'Name' %></label>
+            <input type="text" name="name" id="edit-name" required
+              class="w-full rounded-xl border border-neutral-200 dark:border-neutral-700/50 bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-white text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-600 transition"
+              placeholder="<%= req.translations.apiKeyNamePlaceholder || 'My API Key' %>">
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1" style="color:var(--theme-text-muted);"><%= req.translations.apiKeyDescriptionLabel || 'Description' %></label>
+            <input type="text" name="description" id="edit-description"
+              class="w-full rounded-xl border border-neutral-200 dark:border-neutral-700/50 bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-white text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-600 transition"
+              placeholder="<%= req.translations.apiKeyDescriptionPlaceholder || 'Used for server management' %>">
+          </div>
+        </div>
+
+        <!-- Quick select -->
+        <div class="flex gap-2">
+          <button type="button" id="editSelectAllBtn" class="text-xs px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700/40 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition inline-flex items-center gap-1.5"><%- icon('check-check', { class: 'size-3', strokeWidth: 1.5 }) %> Select all</button>
+          <button type="button" id="editSelectNoneBtn" class="text-xs px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700/40 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition inline-flex items-center gap-1.5"><%- icon('x', { class: 'size-3', strokeWidth: 1.5 }) %> Clear all</button>
+          <button type="button" id="editSelectReadOnlyBtn" class="text-xs px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700/40 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition inline-flex items-center gap-1.5"><%- icon('eye', { class: 'size-3', strokeWidth: 1.5 }) %> Read only</button>
+        </div>
+
+        <!-- Permissions grid -->
+        <div class="space-y-3">
+          <% ['servers', 'users', 'nodes', 'settings'].forEach(cat => { %>
+          <div class="rounded-xl border border-neutral-200 dark:border-neutral-700/50 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800/60">
+              <p class="text-xs font-semibold capitalize" style="color:var(--theme-text-muted);"><%= cat %></p>
+              <button type="button" class="edit-select-category text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition" data-category="<%= cat %>">Select all</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 px-4 py-3">
+              <% allPermissions.filter(p => p.value.includes(cat)).forEach(permission => { %>
+              <label class="flex items-center gap-2 cursor-pointer group">
+                <input id="edit-permission-<%= permission.value %>" name="permissions" value="<%= permission.value %>" type="checkbox"
+                  class="h-3.5 w-3.5 rounded border-neutral-300 dark:border-neutral-600 text-neutral-700 focus:ring-neutral-500 edit-permission-checkbox" data-category="<%= cat %>">
+                <span class="text-xs text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-900 dark:group-hover:text-white transition"><%= permission.name %></span>
+              </label>
+              <% }); %>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="flex gap-2 px-6 py-4 border-t justify-end shrink-0" style="border-color:var(--theme-border);">
+        <button type="button" onclick="hideEditModal()" class="px-4 py-2 text-xs font-medium rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition inline-flex items-center gap-2"><%- icon('x', { class: 'size-3', strokeWidth: 1.5 }) %> Cancel</button>
+        <button type="submit" class="px-4 py-2 text-xs font-medium rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition inline-flex items-center gap-2"><%- icon('save', { class: 'size-3', strokeWidth: 1.5 }) %> Save changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<% if (created) { %>
+<div id="createdKeyModal" class="al-sheet-overlay fixed inset-0 z-50 hidden items-center justify-center" aria-hidden="true">
+  <div class="absolute inset-0 bg-transparent"></div>
+  <div id="createdKeyPanel" role="dialog" aria-modal="true" aria-labelledby="createdKeyTitle" tabindex="-1" class="al-sheet-panel relative rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[85vh] flex flex-col" style="background:var(--theme-bg-card); border-color:var(--theme-border);">
+    <div class="flex justify-between items-center px-6 py-4 border-b" style="border-color:var(--theme-border);">
+      <h3 id="createdKeyTitle" class="text-sm font-semibold" style="color:var(--theme-text-strong);">API key created</h3>
+      <button type="button" onclick="hideCreatedKeyModal()" class="al-btn-ghost p-2 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0" style="color:var(--theme-text-muted);" aria-label="Close">
+        <%- icon('x', { class: 'h-5 w-5', strokeWidth: 1.5 }) %>
+      </button>
+    </div>
+    <div class="px-6 py-4">
+      <p class="text-xs mb-4" style="color:var(--theme-text-muted);">Copy it now — for security, this is the only time the full key is shown.</p>
+      <div class="flex items-center gap-2 rounded-xl px-3 py-2.5" style="background:var(--theme-bg-secondary); border:1px solid var(--theme-border)">
+        <code class="flex-1 text-xs font-mono break-all" style="color:var(--theme-text-strong)"><%= created %></code>
+      </div>
+    </div>
+    <div class="flex gap-2 px-6 py-4 border-t justify-end" style="border-color:var(--theme-border);">
+      <button type="button" onclick="hideCreatedKeyModal()" class="al-btn-secondary"><%- icon('x', { class: 'size-4', strokeWidth: 1.5 }) %> Close</button>
+      <button type="button" onclick="copyCreatedKey()" class="al-btn-primary"><%- icon('copy', { class: 'size-4', strokeWidth: 1.5 }) %> Copy key</button>
+    </div>
+  </div>
+</div>
+<% } %>
+
+
+
+<script nonce="<%- nonce %>">
+(function () {
+  let activeModalId = null;
+  let modalReturnFocus = null;
+
+  function getFocusableElements(root) {
+    return Array.from(root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+      .filter(el => !el.disabled && el.offsetParent !== null);
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('API key copied to clipboard', 'success');
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+      showToast('Failed to copy to clipboard', 'error');
+    });
+  }
+
+
+  const createApiKeyBtn = document.getElementById('createApiKeyBtn');
+  const createApiKeyModal = document.getElementById('createApiKeyModal');
+  const createApiKeyPanel = document.getElementById('createApiKeyPanel');
+
+  createApiKeyBtn.addEventListener('click', () => {
+    modalReturnFocus = document.activeElement;
+    activeModalId = 'createApiKeyModal';
+    createApiKeyModal.setAttribute('aria-hidden', 'false');
+    createApiKeyModal.classList.remove('hidden');
+    createApiKeyModal.classList.add('flex');
+    Animate.openModal(createApiKeyModal, createApiKeyPanel);
+    const focusable = getFocusableElements(createApiKeyPanel || createApiKeyModal);
+    (focusable[0] || createApiKeyPanel || createApiKeyModal).focus();
+  });
+
+  function hideCreateModal() {
+    createApiKeyModal.setAttribute('aria-hidden', 'true');
+    const done = function () {
+      createApiKeyModal.classList.add('hidden');
+      createApiKeyModal.classList.remove('flex');
+      if (modalReturnFocus && typeof modalReturnFocus.focus === 'function') modalReturnFocus.focus();
+      modalReturnFocus = null;
+      activeModalId = null;
+    };
+    Animate.closeModal(createApiKeyModal, createApiKeyPanel, done);
+  }
+
+  function toggleCategory(btn) {
+    const panel = btn.nextElementSibling;
+    const chevron = btn.querySelector('.category-chevron');
+    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+    if (isExpanded) {
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      chevron.classList.remove('rotate-180');
+      setTimeout(() => {
+        if (!panel.classList.contains('open')) panel.classList.add('hidden');
+      }, 200);
+    } else {
+      panel.classList.remove('hidden');
+      panel.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      chevron.classList.add('rotate-180');
+    }
+  }
+
+  function updateCategoryCount(category) {
+    const total = document.querySelectorAll(`#createApiKeyModal .permission-checkbox[data-category="${category}"]`).length;
+    const checked = document.querySelectorAll(`#createApiKeyModal .permission-checkbox[data-category="${category}"]:checked`).length;
+    const countEl = document.querySelector(`#createApiKeyModal .category-count[data-category="${category}"]`);
+    if (countEl) countEl.textContent = checked === 0 ? '' : `${checked}/${total}`;
+
+    document.querySelectorAll(`#createApiKeyModal .permission-checkbox[data-category="${category}"]`).forEach(cb => {
+      const label = cb.closest('.permission-label');
+      const text = label.querySelector('.permission-label-text');
+      if (cb.checked) {
+        label.classList.add('border-neutral-900', 'dark:border-white/30', 'bg-neutral-900', 'dark:bg-white/10');
+        label.classList.remove('border-neutral-100', 'dark:border-neutral-700/40', 'bg-neutral-50', 'dark:bg-neutral-800/50');
+        text.classList.add('text-white', 'dark:text-white');
+        text.classList.remove('text-neutral-600', 'dark:text-neutral-300');
+      } else {
+        label.classList.remove('border-neutral-900', 'dark:border-white/30', 'bg-neutral-900', 'dark:bg-white/10');
+        label.classList.add('border-neutral-100', 'dark:border-neutral-700/40', 'bg-neutral-50', 'dark:bg-neutral-800/50');
+        text.classList.remove('text-white', 'dark:text-white');
+        text.classList.add('text-neutral-600', 'dark:text-neutral-300');
+      }
+    });
+  }
+
+  const presetPermissions = {
+    'full-admin': [
+      'airlink.api.servers.read', 'airlink.api.servers.create', 'airlink.api.servers.update', 'airlink.api.servers.delete',
+      'airlink.api.users.read', 'airlink.api.users.create', 'airlink.api.users.update', 'airlink.api.users.delete',
+      'airlink.api.nodes.read', 'airlink.api.nodes.create', 'airlink.api.nodes.update', 'airlink.api.nodes.delete',
+      'airlink.api.settings.read', 'airlink.api.settings.update'
+    ],
+    'read-only': [
+      'airlink.api.servers.read', 'airlink.api.users.read', 'airlink.api.nodes.read', 'airlink.api.settings.read'
+    ],
+    'server-manager': [
+      'airlink.api.servers.read', 'airlink.api.servers.create', 'airlink.api.servers.update', 'airlink.api.servers.delete',
+      'airlink.api.nodes.read'
+    ],
+    'user-manager': [
+      'airlink.api.users.read', 'airlink.api.users.create', 'airlink.api.users.update', 'airlink.api.users.delete',
+      'airlink.api.servers.read'
+    ],
+    'node-monitor': [
+      'airlink.api.nodes.read', 'airlink.api.servers.read'
+    ],
+    'none': []
+  };
+
+  document.querySelectorAll('#createApiKeyModal .preset-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const preset = this.dataset.preset;
+      const allowed = presetPermissions[preset] || [];
+
+      document.querySelectorAll('#createApiKeyModal .permission-checkbox').forEach(cb => {
+        cb.checked = allowed.includes(cb.value);
+      });
+
+      ['servers', 'users', 'nodes', 'settings'].forEach(cat => updateCategoryCount(cat));
+
+      document.querySelectorAll('#createApiKeyModal .preset-btn').forEach(b => {
+        b.classList.remove('bg-neutral-900', 'dark:bg-white', 'text-white', 'dark:text-neutral-900', 'border-neutral-900', 'dark:border-white');
+        b.classList.add('bg-white', 'dark:bg-neutral-800', 'text-neutral-700', 'dark:text-neutral-300', 'border-neutral-200', 'dark:border-neutral-700');
+      });
+      this.classList.remove('bg-white', 'dark:bg-neutral-800', 'text-neutral-700', 'dark:text-neutral-300', 'border-neutral-200', 'dark:border-neutral-700');
+      this.classList.add('bg-neutral-900', 'dark:bg-white', 'text-white', 'dark:text-neutral-900', 'border-neutral-900', 'dark:border-white');
+    });
+  });
+
+
+  const editApiKeyModal = document.getElementById('editApiKeyModal');
+  const editApiKeyModalPanel = document.getElementById('editApiKeyModalPanel');
+  const editApiKeyModalBackdrop = document.getElementById('editApiKeyModalBackdrop');
+  const editApiKeyForm = document.getElementById('editApiKeyForm');
+  const editNameInput = document.getElementById('edit-name');
+  const editDescriptionInput = document.getElementById('edit-description');
+
+  function showEditModal(id, name, description, permissions) {
+    modalReturnFocus = document.activeElement;
+    activeModalId = 'editApiKeyModal';
+    editApiKeyForm.action = `/admin/apikeys/edit/${id}`;
+    editNameInput.value = name;
+    editDescriptionInput.value = description || '';
+
+    document.querySelectorAll('[id^="edit-permission-"]').forEach(cb => cb.checked = false);
+
+    try {
+      const perms = typeof permissions === 'string' ? JSON.parse(permissions) : permissions;
+      perms.forEach(p => {
+        const cb = document.getElementById(`edit-permission-${p}`);
+        if (cb) cb.checked = true;
+      });
+    } catch (e) {
+      console.error('Error parsing permissions:', e);
+      showToast('Could not load permissions for this API key.', 'error');
+    }
+
+    editApiKeyModal.setAttribute('aria-hidden', 'false');
+    editApiKeyModal.classList.remove('hidden');
+    editApiKeyModal.classList.add('flex');
+    Animate.openModal(editApiKeyModal, editApiKeyModalPanel);
+    editNameInput.focus();
+  }
+
+  function hideEditModal() {
+    editApiKeyModal.setAttribute('aria-hidden', 'true');
+    const done = function () {
+      editApiKeyModal.classList.add('hidden');
+      editApiKeyModal.classList.remove('flex');
+      if (modalReturnFocus && typeof modalReturnFocus.focus === 'function') modalReturnFocus.focus();
+      modalReturnFocus = null;
+      activeModalId = null;
+    };
+    Animate.closeModal(editApiKeyModal, editApiKeyModalPanel, done);
+  }
+
+  editApiKeyModalBackdrop.addEventListener('click', hideEditModal);
+
+  document.addEventListener('keydown', function(e) {
+    if (!activeModalId) return;
+    const modal = document.getElementById(activeModalId);
+    const panel = modal.querySelector('[role="dialog"]');
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (activeModalId === 'createApiKeyModal') hideCreateModal();
+      else hideEditModal();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const focusable = getFocusableElements(panel);
+    if (!focusable.length) {
+      e.preventDefault();
+      panel.focus();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+
+  document.querySelectorAll('.select-category').forEach(button => {
+    button.addEventListener('click', function() {
+      const category = this.getAttribute('data-category');
+      const checkboxes = document.querySelectorAll(`.permission-checkbox[data-category="${category}"]`);
+
+
+      const allSelected = Array.from(checkboxes).every(cb => cb.checked);
+
+
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = !allSelected;
+      });
+
+
+      this.textContent = allSelected ? 'Select All' : 'Deselect All';
+    });
+  });
+
+  document.querySelectorAll('.edit-select-category').forEach(button => {
+    button.addEventListener('click', function() {
+      const category = this.getAttribute('data-category');
+      const checkboxes = document.querySelectorAll(`.edit-permission-checkbox[data-category="${category}"]`);
+
+
+      const allSelected = Array.from(checkboxes).every(cb => cb.checked);
+
+
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = !allSelected;
+      });
+
+
+      this.textContent = allSelected ? 'Select All' : 'Deselect All';
+    });
+  });
+
+
+  document.getElementById('editSelectAllBtn').addEventListener('click', function() {
+    document.querySelectorAll('.edit-permission-checkbox').forEach(checkbox => {
+      checkbox.checked = true;
+    });
+    showToast('All permissions selected', 'success');
+  });
+
+  document.getElementById('editSelectNoneBtn').addEventListener('click', function() {
+    document.querySelectorAll('.edit-permission-checkbox').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    showToast('All permissions cleared', 'success');
+  });
+
+  document.getElementById('editSelectReadOnlyBtn').addEventListener('click', function() {
+
+    document.querySelectorAll('.edit-permission-checkbox').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+
+    document.querySelectorAll('.edit-permission-checkbox').forEach(checkbox => {
+      if (checkbox.value.includes('.read')) {
+        checkbox.checked = true;
+      }
+    });
+
+    showToast('Read-only permissions selected', 'success');
+  });
+
+  async function postForm(form, successMessage, onSuccess) {
+    const btn = form.querySelector('[type="submit"]');
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'csrf-token': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+        body: new URLSearchParams(new FormData(form))
+      });
+      if (res.ok) {
+        showToast(successMessage, 'success');
+        if (onSuccess) onSuccess(res);
+        return true;
+      }
+      let msg = 'Something went wrong. Try again.';
+      try { const data = await res.json(); msg = data.error || data.message || msg; } catch (e) {
+        console.warn('[apikeys] Failed to parse error response:', e);
+      }
+      showToast(msg, 'error');
+      return false;
+    } catch (e) {
+      console.error('Request failed:', e);
+      showToast('Network error — try again.', 'error');
+      return false;
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function updateApiKeyToggle(form, enabling) {
+    const keyId = form.id.replace('toggleKeyForm_', '');
+    const card = document.querySelector('[data-api-key-id="' + keyId + '"]');
+    if (!card) return;
+    const badge = card.querySelector('.api-key-status-badge');
+    if (badge) {
+      badge.textContent = enabling ? 'Active' : 'Inactive';
+      badge.style.background = enabling ? 'var(--theme-success-bg)' : 'var(--theme-danger-bg)';
+      badge.style.color = enabling ? 'var(--theme-success)' : 'var(--theme-danger)';
+      badge.style.setProperty('--tw-ring-color', 'color-mix(in srgb, ' + (enabling ? 'var(--theme-success)' : 'var(--theme-danger)') + ' 25%, transparent)');
+    }
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) {
+      btn.setAttribute('aria-label', enabling ? 'Disable API key' : 'Enable API key');
+      btn.innerHTML = window.alIcon
+        ? (enabling ? window.alIcon('x-circle', 'w-4 h-4 shrink-0') : window.alIcon('check-circle', 'w-4 h-4 shrink-0'))
+        : '';
+    }
+  }
+
+  function updateApiKeyEdit() {
+    const id = editApiKeyForm.action.split('/').pop();
+    const card = document.querySelector('[data-api-key-id="' + id + '"]');
+    if (!card) return;
+    const content = card.querySelector('.min-w-0.flex-1');
+    if (content) {
+      const nameEl = card.querySelector('.api-key-name');
+      if (nameEl) nameEl.textContent = editNameInput.value.trim();
+      const desc = editDescriptionInput.value.trim();
+      let descEl = card.querySelector('.api-key-desc');
+      if (desc) {
+        if (!descEl) {
+          descEl = document.createElement('p');
+          descEl.className = 'text-xs api-key-desc';
+          descEl.style.color = 'var(--theme-text-muted)';
+          if (content) content.appendChild(descEl);
+        }
+        descEl.textContent = desc;
+      } else if (descEl) {
+        descEl.remove();
+      }
+    }
+  }
+
+  const createApiKeyForm = document.getElementById('createApiKeyForm');
+  if (createApiKeyForm) {
+    createApiKeyForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      // The raw key is only surfaced server-side via the ?created= redirect —
+      // navigate there so the created-key modal can display it once.
+      postForm(createApiKeyForm, 'API key created', function(res) {
+        hideCreateModal();
+        window.location.href = res.url || '/admin/apikeys';
+      });
+    });
+  }
+
+  document.querySelectorAll('form[id^="toggleKeyForm_"]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const enabling = form.querySelector('button[type="submit"]').getAttribute('aria-label')?.includes('Enable');
+      postForm(form, enabling ? 'API key enabled' : 'API key disabled', function() {
+        updateApiKeyToggle(form, enabling);
+      });
+    });
+  });
+
+  editApiKeyForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    postForm(editApiKeyForm, 'API key updated', function() {
+      hideEditModal();
+      updateApiKeyEdit();
+    });
+  });
+
+  const createdKeyModal = document.getElementById('createdKeyModal');
+  if (createdKeyModal) {
+    const createdKeyPanel = document.getElementById('createdKeyPanel');
+    createdKeyModal.classList.remove('hidden');
+    createdKeyModal.classList.add('flex');
+    createdKeyModal.setAttribute('aria-hidden', 'false');
+    Animate.openModal(createdKeyModal, createdKeyPanel);
+    if (createdKeyPanel) createdKeyPanel.focus();
+    window.hideCreatedKeyModal = function() {
+      const done = function () {
+        createdKeyModal.classList.add('hidden');
+        createdKeyModal.classList.remove('flex');
+        createdKeyModal.setAttribute('aria-hidden', 'true');
+        history.replaceState({}, '', '/admin/apikeys');
+      };
+      Animate.closeModal(createdKeyModal, createdKeyPanel, done);
+    };
+    window.copyCreatedKey = function() {
+      copyToClipboard('<%= created %>');
+    };
+  }
+
+  // Inline HTML attributes on this page call these handlers directly; expose
+  // them so Turbo re-execution keeps the global bindings working.
+  window.copyToClipboard = copyToClipboard;
+  window.showEditModal = showEditModal;
+  window.hideCreateModal = hideCreateModal;
+  window.hideEditModal = hideEditModal;
+  window.toggleCategory = toggleCategory;
+  window.updateCategoryCount = updateCategoryCount;
+})();
+</script>
+
+<%- include('../../components/footer') %>
+
+<script nonce="<%- nonce %>" src="/javascript/admin/apikeys.js?v=5"></script>

@@ -1,0 +1,63 @@
+<div class="sm:flex-auto">
+  <div class="flex items-center">
+    <h1 class="text-lg font-semibold leading-6 truncate max-w-[300px]" style="color:var(--theme-text-strong);">
+      <%= server.name.charAt(0).toUpperCase() + server.name.slice(1) %>
+    </h1>
+
+    <% if (typeof serverStatus !== 'undefined') { %>
+      <div class="ml-3" data-server-status-container>
+        <%- include('../components/ui/status-badge', { status: serverStatus.online ? 'online' : serverStatus.starting ? 'starting' : 'offline' }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="flex items-center mt-1">
+    <p class="tracking-tight text-sm truncate max-w-full sm:max-w-[400px]" style="color:var(--theme-text-muted);">
+      <%= server.description %>
+    </p>
+
+    <% if (typeof serverStatus !== 'undefined' && serverStatus.online && typeof serverStatus.startedAt !== 'undefined' && serverStatus.startedAt) { %>
+      <div class="ml-3 text-xs flex items-center" style="color:var(--theme-text-muted);" data-server-started-container>
+        <%- icon('clock', { class: 'h-3 w-3 mr-1' }) %>
+        <span data-server-started-time data-started-at="<%= serverStatus.startedAt %>">Started: <%= new Date(serverStatus.startedAt).toLocaleString() %></span>
+      </div>
+    <% } else { %>
+      <div class="ml-3 text-xs hidden items-center" style="color:var(--theme-text-muted);" data-server-started-container>
+        <%- icon('clock', { class: 'h-3 w-3 mr-1' }) %>
+        <span data-server-started-time><%= req.translations.startedUnknown || 'Started: Unknown' %></span>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%
+function formatUptime(seconds) {
+  if (typeof seconds !== 'number' || isNaN(seconds)) {
+    return 'Unknown';
+  }
+
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m`;
+  } else if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  } else if (minutes > 0) {
+    return `${minutes}m ${secs}s`;
+  } else {
+    return `${secs}s`;
+  }
+}
+%>
+
+<% if (typeof server !== 'undefined' && server.UUID) { %>
+<div id="server-header-data" class="hidden"></div>
+<script nonce="<%- nonce %>">
+  document.getElementById('server-header-data').dataset.uuid = '<%= server.UUID %>';
+  document.getElementById('server-header-data').dataset.daemonOffline = '<%= typeof serverStatus !== "undefined" && serverStatus.daemonOffline ? "true" : "false" %>';
+</script>
+<script nonce="<%- nonce %>" src="/javascript/user/server-header.js?v=7"></script>
+<% } %>

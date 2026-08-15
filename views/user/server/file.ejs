@@ -1,0 +1,591 @@
+<%- include('../../components/header', { title: 'Files' }) %>
+<style>
+  .al-editor-shell { min-height: calc(100dvh - 15rem); }
+  .al-editor-toolbar { gap: 0.75rem; }
+  .al-editor-path {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.35;
+  }
+  .al-editor-status {
+    gap: 0.5rem 1rem;
+    scrollbar-width: thin;
+  }
+  .al-editor-status button,
+  .al-editor-status span[data-kbd] {
+    min-height: 1.5rem;
+  }
+  @media (max-width: 1023px) {
+    .al-editor-shell { min-height: 60dvh; }
+  }
+</style>
+<main class="h-screen m-auto text-neutral-800 dark:text-white">
+  <div class="flex h-full">
+    <div class="hidden lg:block w-60 h-full">
+      <%- include('../../components/template') %>
+    </div>
+    <div id="page-content" class="flex-1 min-w-0 overflow-y-auto pt-16 pb-12 lg:pb-12">
+      <%- include('../../components/ui/breadcrumb', { items: [
+        { label: 'Dashboard', href: '/' },
+        { label: server.name, href: '/server/' + server.UUID },
+        { label: 'Files', href: '/server/' + server.UUID + '/files' },
+        { label: file.name }
+      ] }) %>
+      <!-- Page Header: title + meta left -->
+      <div class="px-8 pt-4">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <%- include('../../components/serverHeader') %>
+            <!-- Server meta: image · node · id -->
+            <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+              <div class="flex items-center gap-1.5">
+                <%- icon('box', { class: 'h-3 w-3 shrink-0' }) %>
+                <span class="text-[11px] truncate max-w-[140px]" style="color:var(--theme-text-muted)"><%= server.image.name %></span>
+              </div>
+              <span class="text-[11px]" style="color:var(--theme-text-muted)">·</span>
+              <div class="flex items-center gap-1.5">
+                <%- icon('server', { class: 'h-3 w-3 shrink-0' }) %>
+                <span class="text-[11px] truncate max-w-[100px]" style="color:var(--theme-text-muted)"><%= server.node.name %></span>
+              </div>
+              <span class="text-[11px]" style="color:var(--theme-text-muted)">·</span>
+              <div class="flex items-center gap-1.5">
+                <%- icon('hash', { class: 'h-3 w-3 shrink-0' }) %>
+                <span class="text-[11px] font-mono" style="color:var(--theme-text-muted)"><%= server.UUID.split('-')[0] %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%- include('../../components/installHeader') %>
+
+      <!-- Daemon down message removed as requested -->
+
+      <%- include('../../components/serverTemplate') %>
+
+      <div id="server-page-body">
+
+      <!-- Daemon Offline Warning -->
+      <% if (typeof serverStatus !== 'undefined' && serverStatus.daemonOffline && errorMessage && errorMessage.message) { %>
+      <div id="daemon-offline-banner" class="mx-8 mt-8 rounded-xl p-4 flex items-center" style="background:var(--theme-danger-bg);border:1px solid var(--theme-danger);">
+        <div class="flex-shrink-0 mr-3">
+          <%- icon('triangle-alert', { class: 'h-6 w-6', style: 'color:var(--theme-danger);' }) %>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium" style="color:var(--theme-danger);">Connection Error</h3>
+          <p class="text-xs" style="color:var(--theme-danger);"><%= errorMessage.message %></p>
+          <button type="button" id="retryConnectionBtn" class="al-btn-danger mt-2 px-3 py-1 text-xs rounded-lg transition-colors inline-flex items-center gap-1.5">
+            <%- icon('refresh-cw', { class: 'size-3', strokeWidth: 1.5 }) %>
+            Retry Connection
+          </button>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="flex flex-col lg:flex-row px-8 mt-8">
+        <div class="al-ui-surface overflow-hidden rounded-xl w-full">
+          <!-- File Editor -->
+          <div class="p-5">
+            <div class="al-editor-toolbar flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+              <h2 class="al-editor-path text-sm font-medium min-w-0" style="color:var(--theme-text-strong)">
+                <a class="hover:text-neutral-950 dark:hover:text-neutral-200 transition" href="/server/<%= server.UUID %>/files" style="color:var(--theme-text-muted)">/home/container/</a>
+              <%
+                  if (file.path) {
+                      const parts = file.path.split('/');
+                      let currentPath = '';
+
+                      parts.forEach((part, index) => {
+                          currentPath += part;
+
+                          if (index < parts.length - 1) {
+                              %>
+                              <a href="/server/<%= server.UUID %>/files?path=<%= currentPath %>" class="hover:text-neutral-950 dark:hover:text-neutral-200 transition" style="color:var(--theme-text-muted)"><%= part %></a><span style="color:var(--theme-text-muted)">/</span>
+                              <%
+                              currentPath += '/';
+                          } else {
+                              %>
+                              <span style="color:var(--theme-text-strong)"><%= part %></span>
+                              <%
+                          }
+                      });
+                  }
+              %>
+              </h2>
+              <div class="flex shrink-0">
+                <button id="saveBtn" class="al-ui-button-primary min-w-24" type="button">
+                  <%- icon('save', { class: 'h-4 w-4 mr-1.5', strokeWidth: 2 }) %>
+                  Save
+                </button>
+              </div>
+            </div>
+            <div class="border rounded-xl overflow-hidden" style="border-color:var(--theme-border)" id="editor-container-wrapper">
+              <div class="al-editor-shell" id="editor-container"></div>
+              <div class="al-editor-status flex flex-col xl:flex-row xl:justify-between xl:items-center px-3 py-2 border-t text-xs font-mono overflow-x-auto" style="background:var(--theme-bg-secondary);border-top-color:var(--theme-border);color:var(--theme-text-muted);">
+                <div class="flex items-center gap-3 whitespace-nowrap">
+                  <div id="editor-status">Line: 1, Column: 1</div>
+                  <div id="file-info" class="px-2 py-0.5 bg-neutral-200 dark:bg-neutral-600 rounded text-neutral-600 dark:text-neutral-300">Loading...</div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex items-center">
+                    <span class="opacity-75 mr-1.5">Word Wrap:</span>
+                    <button type="button" id="toggle-wordwrap" class="px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-neutral-600 hover:bg-neutral-300 dark:hover:bg-neutral-500 transition-colors">Off</button>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="opacity-75 mr-1.5">Minimap:</span>
+                    <button type="button" id="toggle-minimap" class="px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-neutral-600 hover:bg-neutral-300 dark:hover:bg-neutral-500 transition-colors">Off</button>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="opacity-75 mr-1.5">Theme:</span>
+                    <button type="button" id="toggle-theme" class="px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-neutral-600 hover:bg-neutral-300 dark:hover:bg-neutral-500 transition-colors">Auto</button>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="opacity-75 mr-1.5">Save:</span>
+                    <span data-kbd class="px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-neutral-600">Ctrl+S</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      </div><!-- /server-page-body -->
+
+      </div>
+</main>
+
+
+<script nonce="<%- nonce %>" src="/monaco/vs/loader.js"></script>
+<%
+    const fileExtension = (file.extension || '').toString().toLowerCase();
+    // Monaco language id mapping. Unknown/missing extensions fall back to plaintext.
+    const language = fileExtension === 'js' ? 'javascript'
+                       : fileExtension === 'mjs' ? 'javascript'
+                       : fileExtension === 'cjs' ? 'javascript'
+                       : fileExtension === 'jsx' ? 'javascript'
+                       : fileExtension === 'json' ? 'json'
+                       : fileExtension === 'html' ? 'html'
+                       : fileExtension === 'htm' ? 'html'
+                       : fileExtension === 'css' ? 'css'
+                       : fileExtension === 'ts' ? 'typescript'
+                       : fileExtension === 'tsx' ? 'typescript'
+                       : fileExtension === 'md' ? 'markdown'
+                       : fileExtension === 'markdown' ? 'markdown'
+                       : fileExtension === 'txt' ? 'plaintext'
+                       : fileExtension === 'py' ? 'python'
+                       : fileExtension === 'sh' ? 'shell'
+                       : fileExtension === 'bash' ? 'shell'
+                       : fileExtension === 'zsh' ? 'shell'
+                       : fileExtension === 'go' ? 'go'
+                       : fileExtension === 'php' ? 'php'
+                       : fileExtension === 'sql' ? 'sql'
+                       : fileExtension === 'c' ? 'c'
+                       : fileExtension === 'h' ? 'c'
+                       : fileExtension === 'cpp' ? 'cpp'
+                       : fileExtension === 'cc' ? 'cpp'
+                       : fileExtension === 'hpp' ? 'cpp'
+                       : fileExtension === 'java' ? 'java'
+                       : fileExtension === 'rb' ? 'ruby'
+                       : fileExtension === 'pl' ? 'perl'
+                       : fileExtension === 'yml' ? 'yaml'
+                       : fileExtension === 'yaml' ? 'yaml'
+                       : fileExtension === 'xml' ? 'xml'
+                       : fileExtension === 'ini' ? 'ini'
+                       : fileExtension === 'toml' ? 'ini'
+                       : fileExtension === 'cfg' ? 'ini'
+                       : fileExtension === 'env' ? 'ini'
+                       : fileExtension === 'conf' ? 'ini'
+                       : fileExtension === 'properties' ? 'ini'
+                       : fileExtension === 'dockerfile' ? 'dockerfile'
+                       : fileExtension === 'cs' ? 'csharp'
+                       : fileExtension === 'kt' ? 'kotlin'
+                       : fileExtension === 'rs' ? 'rust'
+                       : fileExtension === 'swift' ? 'swift'
+                       : fileExtension === 'vue' ? 'html'
+                       : fileExtension === 'svelte' ? 'html'
+                       : 'plaintext';
+    // Content guards: refuse to corrupt/embed problematic files.
+    const _fileContent = file.content || '';
+    const fileContentTooLarge = _fileContent.length > 1048576;
+    const fileContentInvalidUtf8 = /[\uFFFD]/.test(_fileContent);
+    const fileContentSkipped = fileContentTooLarge || fileContentInvalidUtf8;
+%>
+<script type="application/json" id="editor-file-data"><%- JSON.stringify({ content: file.content || '', tooLarge: fileContentTooLarge, invalidUtf8: fileContentInvalidUtf8 }).replace(/<\//g, '<\\/') %></script>
+<script nonce="<%- nonce %>">
+(function () {
+require.config({
+  paths: {
+    'vs': '/monaco/vs'
+  }
+});
+  let editor;
+  let wordWrapEnabled = false;
+  let minimapEnabled = false;
+  let themeMode = 'auto'; // 'auto', 'light', or 'dark'
+  let isDirty = false;
+  let isSaving = false;
+  let allowNavigation = false;
+  const serverUuid = <%- JSON.stringify(server.UUID) %>;
+  const editorFilePath = <%- JSON.stringify(file.path || '') %>;
+  const saveUrl = `/server/${serverUuid}/files/${encodeURIComponent(editorFilePath)}`;
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+  const fileTooLarge = <%- JSON.stringify(fileContentTooLarge) %>;
+  const fileInvalidUtf8 = <%- JSON.stringify(fileContentInvalidUtf8) %>;
+  const fileSkipped = <%- JSON.stringify(fileContentSkipped) %>;
+
+  function initFileEditor(content) {
+    if (editor) {
+      editor.dispose();
+      editor = null;
+    }
+    var container = document.getElementById('editor-container');
+    if (!container) return;
+    container.innerHTML = '';
+    editor = monaco.editor.create(container, {
+      value: content,
+      language: '<%= language %>',
+      theme: document.documentElement.classList.contains('dark') ? 'custom-dark' : 'custom-light',
+      automaticLayout: true,
+      lineNumbers: 'on',
+      roundedSelection: true,
+      scrollBeyondLastLine: false,
+      renderLineHighlight: 'all',
+      cursorBlinking: 'smooth',
+      cursorSmoothCaretAnimation: 'on',
+      minimap: {
+        enabled: minimapEnabled,
+        scale: 1,
+        showSlider: 'mouseover'
+      },
+      wordWrap: wordWrapEnabled ? 'on' : 'off',
+      fontSize: 14,
+      fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+      fontLigatures: true,
+      contextmenu: true,
+      rulers: [],
+      bracketPairColorization: {
+        enabled: true
+      },
+      padding: {
+        top: 10
+      },
+      folding: true,
+      foldingStrategy: 'auto',
+      matchBrackets: 'always',
+      autoIndent: 'full',
+      formatOnPaste: true,
+      formatOnType: true,
+      renderWhitespace: 'selection',
+      renderControlCharacters: true,
+      renderIndentGuides: true,
+      renderFinalNewline: true,
+      colorDecorators: true,
+      suggest: {
+        showMethods: true,
+        showFunctions: true,
+        showConstructors: true,
+        showFields: true,
+        showVariables: true,
+        showClasses: true,
+        showStructs: true,
+        showInterfaces: true,
+        showModules: true,
+        showProperties: true,
+        showEvents: true,
+        showOperators: true,
+        showUnits: true,
+        showValues: true,
+        showConstants: true,
+        showEnums: true,
+        showEnumMembers: true,
+        showKeywords: true,
+        showWords: true,
+        showColors: true,
+        showFiles: true,
+        showReferences: true,
+        showFolders: true,
+        showTypeParameters: true,
+        showSnippets: true
+      }
+    });
+
+    editor.onDidChangeCursorPosition(function(e) {
+      document.getElementById('editor-status').textContent = `Line: ${e.position.lineNumber}, Column: ${e.position.column}`;
+    });
+
+    editor.onDidChangeModelContent(function() {
+      if (!isDirty) isDirty = true;
+    });
+  }
+
+  require(['vs/editor/editor.main'], function (_) {
+    // Never open problematic content into Monaco (would freeze or corrupt it).
+    // Mark the file as clean-to-navigate and surface a clear message instead.
+    if (fileSkipped) {
+      allowNavigation = true;
+      isDirty = false;
+      var e = document.getElementById('editor-container');
+      if (e) {
+        e.innerHTML =
+          '<div class="p-6 text-sm" style="color:var(--theme-text);">' +
+          (fileTooLarge
+            ? 'This file is too large (&gt; 1 MiB) for the in-browser editor. Download or edit it locally instead.'
+            : 'This file contains non-UTF-8 binary content and cannot be edited safely in the browser.') +
+          '</div>';
+      }
+      var info = document.getElementById('file-info');
+      if (info) info.textContent = fileTooLarge ? 'file too large' : 'binary / non-UTF-8';
+      return;
+    }
+
+    // Define custom themes
+    monaco.editor.defineTheme('custom-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+        { token: 'keyword', foreground: 'C586C0', fontStyle: 'bold' },
+        { token: 'string', foreground: 'CE9178' }
+      ],
+      colors: {
+        'editor.background': '#1E1E1E',
+        'editor.foreground': '#D4D4D4',
+        'editor.lineHighlightBackground': '#2A2A2A',
+        'editor.selectionBackground': '#264F78',
+        'editor.selectionHighlightBackground': '#2D3B40',
+        'editorCursor.foreground': '#AEAFAD',
+        'editorWhitespace.foreground': '#3B3B3B'
+      }
+    });
+
+    monaco.editor.defineTheme('custom-light', {
+      base: 'vs',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '008000', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '0000FF', fontStyle: 'bold' },
+        { token: 'string', foreground: 'A31515' }
+      ],
+      colors: {
+        'editor.background': '#FFFFFF',
+        'editor.foreground': '#000000',
+        'editor.lineHighlightBackground': '#F5F5F5',
+        'editor.selectionBackground': '#ADD6FF',
+        'editor.selectionHighlightBackground': '#E5EBF1',
+        'editorCursor.foreground': '#000000',
+        'editorWhitespace.foreground': '#DDDDDD'
+      }
+    });
+
+    initFileEditor(<%- JSON.stringify(fileContentSkipped ? '' : (file.content || '')) %>);
+
+    // Set file info in the status bar
+    document.getElementById('file-info').textContent = '<%= fileExtension %>' || 'plaintext';
+
+    // Toggle word wrap
+    document.getElementById('toggle-wordwrap').addEventListener('click', function() {
+      wordWrapEnabled = !wordWrapEnabled;
+      editor.updateOptions({ wordWrap: wordWrapEnabled ? 'on' : 'off' });
+      this.textContent = wordWrapEnabled ? 'On' : 'Off';
+    });
+
+    // Toggle minimap
+    document.getElementById('toggle-minimap').addEventListener('click', function() {
+      minimapEnabled = !minimapEnabled;
+      editor.updateOptions({ minimap: { enabled: minimapEnabled } });
+      this.textContent = minimapEnabled ? 'On' : 'Off';
+    });
+
+    // Function to update editor theme
+    function updateEditorTheme() {
+      let theme;
+      if (themeMode === 'auto') {
+        theme = document.documentElement.classList.contains('dark') ? 'custom-dark' : 'custom-light';
+      } else if (themeMode === 'dark') {
+        theme = 'custom-dark';
+      } else {
+        theme = 'custom-light';
+      }
+      monaco.editor.setTheme(theme);
+    }
+
+    // Toggle theme button
+    document.getElementById('toggle-theme').addEventListener('click', function() {
+      if (themeMode === 'auto') {
+        themeMode = 'light';
+      } else if (themeMode === 'light') {
+        themeMode = 'dark';
+      } else {
+        themeMode = 'auto';
+      }
+      this.textContent = themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
+      updateEditorTheme();
+    });
+
+    // Adjust theme when system theme changes
+    const darkModeObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.attributeName === 'class' && themeMode === 'auto') {
+          updateEditorTheme();
+        }
+      });
+    });
+
+    darkModeObserver.observe(document.documentElement, { attributes: true });
+  });
+
+
+async function saveFile() {
+    if (!editor) return;
+    if (isSaving) return; // prevent double POST while a save is in flight
+    isSaving = true;
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = `<%- icon('loader-circle', { class: 'animate-spin h-4 w-4 mr-1.5', strokeWidth: 2 }) %>
+      Saving...
+    `;
+
+    const content = editor.getValue();
+    try {
+      const response = await fetch(saveUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'csrf-token': csrfToken,
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      if (!response.ok) {
+        let message = 'Failed to save file';
+        try {
+          const data = await response.json();
+          if (data && data.error) message = data.error;
+        } catch {
+          // keep the default message if the body isn't JSON
+        }
+        throw new Error(message);
+      }
+
+      isDirty = false;
+      showToast('File saved.', 'success');
+    } catch (error) {
+      console.error('Error saving file:', error);
+      // Content is never cleared on failure — offer Retry instead
+      showToast(error && error.message ? error.message : 'Failed to save file', 'error');
+      if (window.modal) {
+        window.modal.confirm({
+          title: 'Save failed',
+          body: 'Your changes are still in the editor. Try saving again?',
+          danger: false,
+          confirmLabel: 'Retry',
+          onConfirm: function () { saveFile(); },
+        });
+      }
+    } finally {
+      isSaving = false;
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = `<%- icon('save', { class: 'h-4 w-4 mr-1.5', strokeWidth: 2 }) %>
+        Save
+      `;
+    }
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', saveFile);
+
+  var retryBtn = document.getElementById('retryConnectionBtn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', async function () {
+      if (retryBtn.disabled) return;
+      retryBtn.disabled = true;
+      retryBtn.innerHTML = `<%- icon('loader-circle', { class: 'animate-spin size-3', strokeWidth: 1.5 }) %> Checking...`;
+      try {
+        const res = await fetch(window.location.href);
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const dataEl = doc.getElementById('editor-file-data');
+        if (!res.ok || doc.getElementById('daemon-offline-banner') || !dataEl) {
+          showToast('Daemon still unreachable. Try again.', 'error');
+          return;
+        }
+        if (typeof monaco === 'undefined' || !monaco.editor) {
+          showToast('Editor is not ready yet. Try again.', 'error');
+          return;
+        }
+        const data = JSON.parse(dataEl.textContent);
+        const banner = document.getElementById('daemon-offline-banner');
+        isDirty = false;
+        allowNavigation = false;
+        if (data.tooLarge || data.invalidUtf8) {
+          allowNavigation = true;
+          var c = document.getElementById('editor-container');
+          if (c) {
+            c.innerHTML = '<div class="p-6 text-sm" style="color:var(--theme-text);">' + (data.tooLarge ? 'This file is too large (&gt; 1 MiB) for the in-browser editor. Download or edit it locally instead.' : 'This file contains non-UTF-8 binary content and cannot be edited safely in the browser.') + '</div>';
+          }
+          var info = document.getElementById('file-info');
+          if (info) info.textContent = data.tooLarge ? 'file too large' : 'binary / non-UTF-8';
+        } else {
+          initFileEditor(data.content);
+        }
+        if (banner) {
+          if (window.al) window.al.removeRow(banner);
+          else if (banner.parentNode) banner.parentNode.removeChild(banner);
+        }
+        showToast('Connection restored.', 'success');
+      } catch (err) {
+        console.error('Failed to retry connection:', err);
+        showToast('Network error. Try again.', 'error');
+      } finally {
+        retryBtn.disabled = false;
+        retryBtn.innerHTML = `<%- icon('refresh-cw', { class: 'size-3', strokeWidth: 1.5 }) %> Retry Connection`;
+      }
+    });
+  }
+
+  document.addEventListener('keydown', async (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault();
+      await saveFile();
+    }
+  });
+
+  // ── Unsaved-changes guard ─────────────────────────────────────────────────
+  // beforeunload covers tab close / hard navigation; in-app links get a
+  // Cancel-first confirm ("Keep editing" stays focused — never traps).
+  window.addEventListener('beforeunload', function (event) {
+    if (!isDirty || allowNavigation) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
+
+  function guardNavigation(href) {
+    if (!isDirty || allowNavigation) return;
+    if (window.modal) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.modal.confirm({
+        title: 'Unsaved changes',
+        body: 'You have unsaved changes in this file. Leave anyway?',
+        danger: true,
+        confirmLabel: 'Discard',
+        onConfirm: function () {
+          allowNavigation = true;
+          window.location.href = href;
+        },
+      });
+    }
+  }
+
+  document.addEventListener('click', function (event) {
+    if (!isDirty || allowNavigation) return;
+    const anchor = event.target.closest('a[href]');
+    if (!anchor) return;
+    const href = anchor.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+    guardNavigation(href);
+  });
+})();
+</script>
+
+<%- include('../../components/footer') %>

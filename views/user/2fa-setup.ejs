@@ -1,0 +1,169 @@
+<%- include('../components/header', { title: 'Two-Factor Authentication' }) %>
+
+<main class="min-h-screen">
+  <div class="flex min-h-screen">
+    <div class="hidden lg:block w-60 shrink-0">
+      <%- include('../components/template') %>
+    </div>
+    <div id="page-content" class="flex-1 overflow-y-auto pt-16 pb-12">
+      <%- include('../components/ui/breadcrumb', { items: [
+        { label: 'Account', href: '/account' },
+        { label: 'Two-Factor Authentication' }
+      ] }) %>
+
+      <div class="al-page-header mb-5">
+        <% if (required) { %>
+          <div class="mb-4 rounded-lg border border-amber-600/40 bg-amber-600/10 px-4 py-3 text-sm" style="color:var(--theme-text-strong)">
+            <strong>Two-factor authentication is required</strong> to access the admin panel. Enable it now to continue.
+          </div>
+        <% } %>
+        <div class="flex items-center gap-4">
+          <div class="shrink-0">
+            <%- icon('shield', { class: 'w-5 h-5', strokeWidth: 1.5 }) %>
+          </div>
+          <div>
+            <h1 class="al-page-title">Set up two-factor authentication</h1>
+            <p class="al-page-desc">Scan the QR code with an authenticator app, then confirm with a code.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="al-page-body">
+        <div class="al-card p-6 sm:p-8 max-w-xl mx-auto">
+          <ol class="flex items-center gap-2 text-xs font-medium mb-8">
+            <li class="flex items-center gap-2" style="color:var(--theme-accent)">
+              <span class="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold" style="background:var(--theme-accent);color:var(--theme-accent-text)">1</span>
+              Scan QR code
+            </li>
+            <li class="h-px flex-1" style="background:var(--theme-border)"></li>
+            <li class="flex items-center gap-2" style="color:var(--theme-text-muted)">
+              <span class="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold border" style="background:var(--theme-bg-secondary);border-color:var(--theme-border);color:var(--theme-text-muted)">2</span>
+              Enter code
+            </li>
+          </ol>
+
+          <div class="flex flex-col items-center mb-7">
+            <div class="rounded-2xl border p-1.5" style="border-color:var(--theme-border);background:#fff">
+              <img src="<%= qrDataUrl %>" alt="QR code" class="h-48 w-48" width="220" height="220">
+            </div>
+            <p class="text-sm mt-4 mb-2" style="color:var(--theme-text-muted)">Can't scan? Enter this key manually in your authenticator app:</p>
+            <div class="flex items-center gap-2 w-full max-w-xs">
+              <code class="select-all flex-1 truncate rounded-lg px-3 py-2 text-sm font-mono text-center" style="background:var(--theme-bg-secondary);color:var(--theme-text-strong)"><%= secretBase32 %></code>
+              <button type="button" id="copySecret" class="al-btn-ghost shrink-0" aria-label="Copy secret key">
+                <%- icon('copy', { size: 14 }) %>
+              </button>
+            </div>
+          </div>
+
+          <form id="enable2faForm" novalidate>
+            <%- include('../components/csrf') %>
+            <label class="block text-sm font-medium mb-2" style="color:var(--theme-text-strong)">6-digit code from your app</label>
+            <div class="flex gap-2">
+              <input id="totpToken" name="token" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" autofocus placeholder="••••••" class="al-input flex-1 text-center font-mono text-lg tracking-[0.4em]">
+              <button id="enableBtn" type="submit" class="al-btn-primary px-5"><%- icon('shield', { class: 'size-4', strokeWidth: 1.5 }) %>Enable 2FA</button>
+            </div>
+            <p id="feedback" class="text-sm mt-2 hidden" aria-live="polite" style="color:var(--theme-danger)"></p>
+          </form>
+
+          <div class="mt-7 pt-4 text-xs" style="border-top:1px solid var(--theme-border); color:var(--theme-text-muted)">
+            <p class="flex items-center gap-1.5">
+              <%- icon('shield-check', { class: 'w-3.5 h-3.5 shrink-0' }) %>
+              Once enabled, you will be asked for a code from your authenticator app every time you sign in.
+            </p>
+            <p class="mt-1.5">Supported apps: Google Authenticator, Authy, 1Password, Bitwarden and other TOTP-compatible apps.</p>
+          </div>
+        </div>
+
+        <div id="recoveryCodesPanel" class="al-card p-6 max-w-xl mx-auto hidden">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0">
+              <%- icon('key-round', { class: 'w-5 h-5', strokeWidth: 1.5, style: 'color:var(--theme-accent)' }) %>
+            </div>
+            <div>
+              <h2 class="text-sm font-semibold" style="color:var(--theme-text-strong)">Save your recovery codes</h2>
+              <p class="text-xs mt-1" style="color:var(--theme-text-muted)">Each code works exactly once. If you lose your authenticator app, use one of these to sign in — then generate new ones. They are only shown now, so store them somewhere safe.</p>
+            </div>
+          </div>
+          <div id="recoveryCodesList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4"></div>
+          <div class="flex items-center justify-between mt-5 gap-3">
+            <button type="button" id="copyRecoveryCodes" class="al-btn-ghost text-sm inline-flex items-center gap-1.5">
+              <%- icon('copy', { size: 14 }) %>
+              Copy all
+            </button>
+            <button type="button" id="ackRecoveryCodes" class="al-btn-primary text-sm px-5">I've saved them</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<script nonce="<%- nonce %>">
+window.ALMount(() => {
+  const { showToast } = createToastSystem();
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  const form = document.getElementById('enable2faForm');
+  const btn = document.getElementById('enableBtn');
+  const feedback = document.getElementById('feedback');
+  const tokenInput = document.getElementById('totpToken');
+  const copySecretBtn = document.getElementById('copySecret');
+  const recoveryPanel = document.getElementById('recoveryCodesPanel');
+  const recoveryList = document.getElementById('recoveryCodesList');
+  let recoveryCodes = [];
+
+  copySecretBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText('<%= secretBase32 %>').then(
+      () => showToast('Secret key copied to clipboard.', 'success'),
+      () => showToast('Could not copy secret key.', 'error'),
+    );
+  });
+
+  document.getElementById('copyRecoveryCodes').addEventListener('click', () => {
+    navigator.clipboard.writeText(recoveryCodes.join('\n')).then(
+      () => showToast('Recovery codes copied.', 'success'),
+      () => showToast('Could not copy recovery codes.', 'error'),
+    );
+  });
+
+  document.getElementById('ackRecoveryCodes').addEventListener('click', () => {
+    window.location.href = '/account';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    feedback.classList.add('hidden');
+    try {
+      const res = await fetch('/account/2fa/enable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
+        body: JSON.stringify({ token: tokenInput.value }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast('Two-factor authentication enabled.', 'success');
+        recoveryCodes = data.recoveryCodes || [];
+        recoveryList.innerHTML = recoveryCodes.map(code => {
+          const escaped = escHtml(code);
+          return '<code class="select-all rounded-lg px-3 py-2 text-xs font-mono text-center" style="background:var(--theme-bg-secondary);color:var(--theme-text-strong)">' + escaped + '</code>';
+        }).join('');
+        form.closest('.al-card').classList.add('hidden');
+        recoveryPanel.classList.remove('hidden');
+        document.getElementById('recoveryCodesPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        feedback.textContent = data.error || 'Something went wrong. Try again.';
+        feedback.classList.remove('hidden');
+      }
+    } catch (err) {
+      console.error('Failed to enable 2FA:', err);
+      feedback.textContent = 'Something went wrong. Try again.';
+      feedback.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+});
+</script>
+
+<%- include('../components/footer') %>

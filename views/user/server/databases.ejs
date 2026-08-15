@@ -1,0 +1,482 @@
+<%- include('../../components/header', { title: 'Databases' }) %>
+
+<main class="h-screen m-auto text-neutral-800 dark:text-white">
+  <div class="flex h-full">
+    <div class="hidden lg:block w-60 h-full">
+      <%- include('../../components/template') %>
+    </div>
+    <div id="page-content" class="flex-1 min-w-0 overflow-y-auto pt-16 pb-12 lg:pb-12">
+      <%- include('../../components/ui/breadcrumb', { items: [
+        { label: 'Dashboard', href: '/' },
+        { label: server.name, href: '/server/' + server.UUID },
+        { label: 'Databases' }
+      ] }) %>
+      <!-- Page Header: title + meta left, buttons right -->
+      <div class="px-4 sm:px-8 pt-4 pb-2 sm:pb-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <%- include('../../components/serverHeader') %>
+            <!-- Server meta: image · node · id -->
+            <%- include('../../components/serverMeta') %>
+          </div>
+          <% if (hosts.length > 0) { %>
+          <div class="flex gap-2 shrink-0">
+            <button id="newDatabaseBtn" onclick="openAddDatabaseModal()" type="button"
+                class="al-btn-primary block rounded-xl px-3 py-2 text-center text-sm font-medium shadow-lg transition duration-300">
+                <%- icon('plus', { class: 'size-4 inline-flex mr-1 mb-0.5', strokeWidth: 1.5 }) %>
+                <%= req.translations.newDatabase || 'New Database' %>
+            </button>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <%- include('../../components/installHeader') %>
+
+      <!-- Server Template -->
+      <%- include('../../components/serverTemplate') %>
+
+      <div id="server-page-body">
+
+      <!-- Databases Management -->
+      <div class="px-6 mt-8">
+        <% if (hosts.length === 0) { %>
+          <div class="al-alert-danger">
+            <%- icon('database', { class: 'w-4 h-4 shrink-0 mt-0.5' }) %>
+            <div class="flex-1">
+              <p class="font-medium"><%= req.translations.noDbHostsConfigured || 'No database hosts configured' %></p>
+              <p class="text-xs mt-0.5" style="color:var(--theme-text-muted)"><%= req.translations.noDbHostsConfiguredDesc || 'An administrator must add a database host before you can create databases.' %></p>
+            </div>
+          </div>
+        <% } else if (databases.length === 0) { %>
+          <div class="al-card rounded-xl p-10 text-center">
+            <div class="flex justify-center">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background:var(--theme-bg-secondary);">
+                <%- icon('database', { class: 'size-6', strokeWidth: 1.5, style: 'color:var(--theme-text-muted)' }) %>
+              </div>
+            </div>
+            <h2 class="mt-4 text-sm font-semibold" style="color:var(--theme-text-strong)"><%= req.translations.noDatabasesYet || 'No databases yet' %></h2>
+            <p class="mt-1 text-sm max-w-sm mx-auto" style="color:var(--theme-text-muted)"><%= req.translations.noDatabasesYetDesc || 'Create a database to use with your server.' %></p>
+            <button type="button" onclick="openAddDatabaseModal()" class="al-btn-primary inline-flex items-center gap-1.5 mt-5 rounded-xl px-4 py-2 text-sm font-medium">
+              <%- icon('plus', { class: 'size-4', strokeWidth: 1.5 }) %>
+              <%= req.translations.createDatabase || 'Create Database' %>
+            </button>
+          </div>
+        <% } else { %>
+          <div class="al-card rounded-lg shadow overflow-hidden p-0">
+            <div class="al-card-header">
+              <div>
+                <h2 class="text-sm font-semibold" style="color:var(--theme-text-strong)">Databases</h2>
+                <p class="text-xs mt-0.5" style="color:var(--theme-text-muted)" data-db-count><%= userDbCount %>/<%= typeof userDbLimit !== 'undefined' && userDbLimit > 0 ? userDbLimit : '∞' %> databases</p>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="al-table min-w-[900px]">
+                <thead class="al-table-head">
+                  <tr>
+                    <th scope="col" class="al-table-th px-6 py-3 uppercase w-48">Name</th>
+                    <th scope="col" class="al-table-th px-6 py-3 uppercase w-44">Host</th>
+                    <th scope="col" class="al-table-th px-6 py-3 uppercase">Connection string</th>
+                    <th scope="col" class="al-table-th px-6 py-3 uppercase w-40">Username</th>
+                    <th scope="col" class="al-table-th px-6 py-3 uppercase w-44">Password</th>
+                    <th scope="col" class="al-table-th px-6 py-3 uppercase text-right w-36">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y" style="border-color:var(--theme-border)">
+                  <% databases.forEach((db, i) => { %>
+                    <tr class="al-table-tr transition-colors" data-db-id="<%= db.id %>" data-db-name="<%= db.databaseName %>">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-2">
+                          <span class="font-mono text-sm font-medium truncate max-w-[10rem]" style="color:var(--theme-text-strong)" title="<%= db.databaseName %>"><%= db.databaseName %></span>
+                          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium shrink-0" style="background:var(--theme-accent-subtle);color:var(--theme-accent)">MySQL</span>
+                        </div>
+                        <div class="text-[11px] mt-1 flex items-center gap-1.5" style="color:var(--theme-text-muted)">
+                          <%- icon('calendar', { class: 'size-3 shrink-0' }) %>
+                          <%= req.translations.createdLabel || 'Created:' %> <%= new Date(db.createdAt).toLocaleDateString() %> <%= new Date(db.createdAt).toLocaleTimeString() %>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium" style="color:var(--theme-text-strong)"><%= db.host.name %></div>
+                        <div class="text-[11px] font-mono mt-0.5" style="color:var(--theme-text-muted)"><%= db.host.host %>:<%= db.host.port %></div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style="background:var(--theme-bg-secondary)">
+                          <span data-role="dsn" class="flex-1 min-w-0 truncate font-mono text-[11px]" style="color:var(--theme-text-strong)">mysql://<%= db.databaseUser %>:<%= db.databasePassword %>@<%= db.host.host %>:<%= db.host.port %>/<%= db.databaseName %></span>
+                          <button type="button" data-action="copy-dsn" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="<%= req.translations.copyConnectionString || 'Copy connection string' %>">
+                            <%- icon('copy', { size: 13 }) %>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style="background:var(--theme-bg-secondary)">
+                          <span data-role="user" class="flex-1 min-w-0 truncate font-mono text-xs" style="color:var(--theme-text-strong)"><%= db.databaseUser %></span>
+                          <button type="button" data-action="copy-user" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="<%= req.translations.copyUsername || 'Copy username' %>">
+                            <%- icon('copy', { size: 13 }) %>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style="background:var(--theme-bg-secondary)">
+                          <span data-role="pass" class="hidden flex-1 min-w-0 truncate font-mono text-xs" style="color:var(--theme-text-strong)"><%= db.databasePassword %></span>
+                          <span data-role="pass-mask" class="flex-1 min-w-0 truncate font-mono text-xs" style="color:var(--theme-text-strong)">••••••••••••••••</span>
+                          <button type="button" data-action="toggle-pass" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="<%= req.translations.showPassword || 'Show password' %>">
+                            <%- icon('eye', { class: 'h-4 w-4', strokeWidth: 1.5 }) %>
+                          </button>
+                          <button type="button" data-action="copy-pass" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="<%= req.translations.copyPassword || 'Copy password' %>">
+                            <%- icon('copy', { size: 13 }) %>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1.5">
+                          <button type="button" data-action="rotate"
+                            class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                            style="color:var(--theme-accent);background:var(--theme-accent-subtle)">
+                            <%- icon('refresh-cw', { class: 'size-3', strokeWidth: 2 }) %>
+                            <%= req.translations.rotatePassword || 'Rotate' %>
+                          </button>
+                          <button type="button" data-action="delete" class="al-btn-ghost p-2" style="color:var(--theme-danger);" aria-label="<%= req.translations.deleteDatabaseAria || 'Delete database' %>">
+                            <%- icon('trash-2', { size: 14 }) %>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      </div><!-- /server-page-body -->
+
+      </div>
+  </div>
+</main>
+
+
+<!-- Create Database Modal -->
+<div id="addDatabaseModal" class="al-sheet-overlay fixed inset-0 z-50 flex items-end sm:items-center justify-center opacity-0 pointer-events-none">
+  <div id="addDatabasePanel" class="al-sheet-panel rounded-2xl w-full sm:max-w-md shadow-xl will-change-transform sm:mx-4 max-h-[85vh] flex flex-col" style="background:var(--theme-bg-card); border:1px solid var(--theme-border);">
+    <div class="flex justify-between items-center px-6 py-4 border-b" style="border-color:var(--theme-border)">
+      <div>
+        <h2 class="text-sm font-semibold" style="color:var(--theme-text-strong)"><%= req.translations.createDatabase || 'Create Database' %></h2>
+        <p class="text-xs mt-0.5" style="color:var(--theme-text-muted)"><%= req.translations.dbProvisionHint || 'A database, user and password will be provisioned on this host.' %></p>
+      </div>
+      <button type="button" onclick="closeAddDatabaseModal()" class="al-btn-ghost p-2 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0" aria-label="Close">
+        <%- icon('x', { class: 'h-5 w-5', strokeWidth: 1.5 }) %>
+      </button>
+    </div>
+    <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4">
+      <label for="dbHostSelect" class="al-label"><%= req.translations.databaseHostLabel || 'Database host' %></label>
+      <select id="dbHostSelect" class="al-input w-full">
+        <% hosts.forEach(host => { %>
+          <option value="<%= host.id %>"><%= host.name %> (<%= host.host %>:<%= host.port %>)</option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="flex gap-2 px-6 py-4 border-t justify-end" style="border-color:var(--theme-border)">
+      <button type="button" onclick="closeAddDatabaseModal()" class="al-btn-secondary inline-flex items-center gap-1.5">
+        <%- icon('x', { class: 'size-4', strokeWidth: 1.5 }) %>
+        <%= req.translations.cancel || 'Cancel' %>
+      </button>
+      <button type="button" id="confirmAddDatabase" class="al-btn-primary inline-flex items-center gap-1.5">
+        <%- icon('plus', { class: 'size-4', strokeWidth: 1.5 }) %>
+        <%= req.translations.createDatabaseBtn || 'Create database' %>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script nonce="<%- nonce %>">
+(function () {
+const t = <%- JSON.stringify(req.translations).replace(/</g, '\\x3c') %>;
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const serverId = '<%= server.UUID %>';
+
+const EYE_ON = '<%- icon('eye', { class: 'h-4 w-4', strokeWidth: 1.5 }) %>';
+const EYE_OFF = '<%- icon('eye-off', { class: 'h-4 w-4', strokeWidth: 1.5 }) %>';
+
+const modalEl = document.getElementById('addDatabaseModal');
+const modalPanel = document.getElementById('addDatabasePanel');
+
+function showAddModal() {
+  modalEl.classList.remove('opacity-0', 'pointer-events-none');
+  Animate.openModal(modalEl, modalPanel);
+  document.getElementById('dbHostSelect').focus();
+}
+
+function hideAddModal() {
+  const done = function () {
+    modalEl.classList.add('opacity-0', 'pointer-events-none');
+  };
+  Animate.closeModal(modalEl, modalPanel, done);
+}
+
+window.openAddDatabaseModal = showAddModal;
+window.closeAddDatabaseModal = hideAddModal;
+
+const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const ICON_CALENDAR = '<%- icon('calendar', { class: 'size-3 shrink-0' }) %>';
+const ICON_COPY = '<%- icon('copy', { size: 13 }) %>';
+const ICON_REFRESH = '<%- icon('refresh-cw', { class: 'size-3', strokeWidth: 2 }) %>';
+const ICON_TRASH = '<%- icon('trash-2', { size: 14 }) %>';
+
+const buildDbRow = (db) => {
+  const host = db.host || {};
+  const created = new Date(db.createdAt).toLocaleDateString() + ' ' + new Date(db.createdAt).toLocaleTimeString();
+  return `<tr class="al-table-tr transition-colors" data-db-id="${db.id}" data-db-name="${esc(db.databaseName)}">
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-sm font-medium truncate max-w-[10rem]" style="color:var(--theme-text-strong)" title="${esc(db.databaseName)}">${esc(db.databaseName)}</span>
+          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium shrink-0" style="background:var(--theme-accent-subtle);color:var(--theme-accent)">MySQL</span>
+        </div>
+        <div class="text-[11px] mt-1 flex items-center gap-1.5" style="color:var(--theme-text-muted)">
+          ${ICON_CALENDAR}
+          ${t.createdLabel || 'Created:'} ${created}
+        </div>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="text-sm font-medium" style="color:var(--theme-text-strong)">${esc(host.name)}</div>
+        <div class="text-[11px] font-mono mt-0.5" style="color:var(--theme-text-muted)">${esc(host.host)}:${host.port}</div>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style="background:var(--theme-bg-secondary)">
+          <span data-role="dsn" class="flex-1 min-w-0 truncate font-mono text-[11px]" style="color:var(--theme-text-strong)">mysql://${esc(db.databaseUser)}:${esc(db.databasePassword)}@${esc(host.host)}:${host.port}/${esc(db.databaseName)}</span>
+          <button type="button" data-action="copy-dsn" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="${t.copyConnectionString || 'Copy connection string'}">
+            ${ICON_COPY}
+          </button>
+        </div>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style="background:var(--theme-bg-secondary)">
+          <span data-role="user" class="flex-1 min-w-0 truncate font-mono text-xs" style="color:var(--theme-text-strong)">${esc(db.databaseUser)}</span>
+          <button type="button" data-action="copy-user" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="${t.copyUsername || 'Copy username'}">
+            ${ICON_COPY}
+          </button>
+        </div>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style="background:var(--theme-bg-secondary)">
+          <span data-role="pass" class="hidden flex-1 min-w-0 truncate font-mono text-xs" style="color:var(--theme-text-strong)">${esc(db.databasePassword)}</span>
+          <span data-role="pass-mask" class="flex-1 min-w-0 truncate font-mono text-xs" style="color:var(--theme-text-strong)">••••••••••••••••</span>
+          <button type="button" data-action="toggle-pass" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="${t.showPassword || 'Show password'}">
+            ${EYE_ON}
+          </button>
+          <button type="button" data-action="copy-pass" class="al-btn-ghost p-2 shrink-0" style="border:none" aria-label="${t.copyPassword || 'Copy password'}">
+            ${ICON_COPY}
+          </button>
+        </div>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="flex items-center justify-end gap-1.5">
+          <button type="button" data-action="rotate"
+            class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            style="color:var(--theme-accent);background:var(--theme-accent-subtle)">
+            ${ICON_REFRESH}
+            ${t.rotatePassword || 'Rotate'}
+          </button>
+          <button type="button" data-action="delete" class="al-btn-ghost p-2" style="color:var(--theme-danger);" aria-label="${t.deleteDatabaseAria || 'Delete database'}">
+            ${ICON_TRASH}
+          </button>
+        </div>
+      </td>
+    </tr>`;
+};
+
+const renderDbTable = (rowHtml) => `
+  <div class="al-card rounded-lg shadow overflow-hidden p-0">
+    <div class="al-card-header">
+      <div>
+        <h2 class="text-sm font-semibold" style="color:var(--theme-text-strong)">Databases</h2>
+        <p class="text-xs mt-0.5" style="color:var(--theme-text-muted)" data-db-count><%= userDbCount + 1 %>/<%= typeof userDbLimit !== 'undefined' && userDbLimit > 0 ? userDbLimit : '∞' %> databases</p>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="al-table min-w-[900px]">
+        <thead class="al-table-head">
+          <tr>
+            <th scope="col" class="al-table-th px-6 py-3 uppercase w-48">Name</th>
+            <th scope="col" class="al-table-th px-6 py-3 uppercase w-44">Host</th>
+            <th scope="col" class="al-table-th px-6 py-3 uppercase">Connection string</th>
+            <th scope="col" class="al-table-th px-6 py-3 uppercase w-40">Username</th>
+            <th scope="col" class="al-table-th px-6 py-3 uppercase w-44">Password</th>
+            <th scope="col" class="al-table-th px-6 py-3 uppercase text-right w-36">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y" style="border-color:var(--theme-border)">${rowHtml}</tbody>
+      </table>
+    </div>
+  </div>`;
+
+const wireDbRow = (row) => {
+  const id = row.dataset.dbId;
+  const name = row.dataset.dbName;
+  row.querySelector('[data-action="copy-dsn"]')?.addEventListener('click', () => {
+    window.copyText(row.querySelector('[data-role="dsn"]').textContent);
+  });
+  row.querySelector('[data-action="copy-user"]')?.addEventListener('click', () => {
+    window.copyText(row.querySelector('[data-role="user"]').textContent);
+  });
+  row.querySelector('[data-action="copy-pass"]')?.addEventListener('click', () => {
+    window.copyText(row.querySelector('[data-role="pass"]').textContent);
+  });
+  row.querySelector('[data-action="toggle-pass"]')?.addEventListener('click', (e) => {
+    window.togglePassword(e.currentTarget);
+  });
+  row.querySelector('[data-action="rotate"]')?.addEventListener('click', () => {
+    window.rotatePassword(id);
+  });
+  row.querySelector('[data-action="delete"]')?.addEventListener('click', () => {
+    window.deleteDatabase(id, name);
+  });
+};
+
+const bumpDbCount = (delta) => {
+  const el = document.querySelector('[data-db-count]');
+  if (!el) return;
+  const m = el.textContent.match(/(\d+)/);
+  if (m) el.textContent = el.textContent.replace(m[0], String(Math.max(0, Number(m[0]) + delta)));
+};
+
+document.getElementById('confirmAddDatabase').addEventListener('click', async () => {
+  const hostId = document.getElementById('dbHostSelect').value;
+  if (!hostId) {
+    showToast(t.selectDbHost || 'Select a database host.', 'error');
+    return;
+  }
+  const btn = document.getElementById('confirmAddDatabase');
+  btn.disabled = true;
+  try {
+    const response = await fetch('/server/' + serverId + '/databases', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+      body: JSON.stringify({ hostId }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (response.ok && result.success && result.database) {
+      showToast(t.databaseCreated || 'Database created.', 'success');
+      hideAddModal();
+      const tbody = document.querySelector('#server-page-body tbody');
+      if (tbody) {
+        al.hideEmpty(tbody);
+        const row = al.addRow(tbody, buildDbRow(result.database));
+        if (row) wireDbRow(row);
+        bumpDbCount(1);
+      } else {
+        al.patchEl('#server-page-body .px-6.mt-8', renderDbTable(buildDbRow(result.database)));
+        document.querySelectorAll('#server-page-body tbody tr[data-db-id]').forEach(wireDbRow);
+      }
+    } else {
+      showToast(result.error || t.failedCreateDatabase || 'Failed to create database.', 'error');
+    }
+  } catch {
+    showToast(t.requestFailed || 'Request failed. Try again?', 'error');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+window.copyText = (text) => {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(
+    () => showToast(t.copiedToClipboard || 'Copied to clipboard.', 'success'),
+    () => showToast(t.couldNotCopy || 'Could not copy.', 'error'),
+  );
+};
+
+window.togglePassword = (btn) => {
+  const row = btn.closest('tr[data-db-id]');
+  const pass = row.querySelector('[data-role="pass"]');
+  const mask = row.querySelector('[data-role="pass-mask"]');
+  const showing = pass.classList.contains('hidden');
+  pass.classList.toggle('hidden', !showing);
+  mask.classList.toggle('hidden', showing);
+  btn.innerHTML = showing ? EYE_OFF : EYE_ON;
+  btn.setAttribute('aria-label', showing
+    ? (t.hidePassword || 'Hide password')
+    : (t.showPassword || 'Show password'));
+};
+
+window.rotatePassword = async (id) => {
+  window.modal.confirm({
+    title: t.rotatePasswordTitle || 'Rotate password',
+    body: t.rotatePasswordConfirm || 'Generate a new password for this database user? Existing connections will be dropped.',
+    danger: true,
+    confirmLabel: t.rotate || 'Rotate',
+    onConfirm: async () => {
+      try {
+        const response = await fetch(`/server/${serverId}/databases/${id}/rotate-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.ok && result.success) {
+          const row = document.querySelector(`tr[data-db-id="${id}"]`);
+          if (row) {
+            const pass = row.querySelector('[data-role="pass"]');
+            const mask = row.querySelector('[data-role="pass-mask"]');
+            const toggle = row.querySelector('[data-action="toggle-pass"]');
+            pass.textContent = result.password;
+            const dsn = row.querySelector('[data-role="dsn"]');
+            dsn.textContent = dsn.textContent.replace(/:[^@]+@/, ':' + result.password + '@');
+            pass.classList.add('hidden');
+            mask.classList.remove('hidden');
+            if (toggle) {
+              toggle.innerHTML = EYE_ON;
+              toggle.setAttribute('aria-label', t.showPassword || 'Show password');
+            }
+          }
+          showToast(t.passwordRotated || 'Password rotated.', 'success');
+        } else {
+          showToast(result.error || t.failedRotatePassword || 'Failed to rotate password.', 'error');
+        }
+      } catch {
+        showToast(t.requestFailed || 'Request failed. Try again?', 'error');
+      }
+    },
+  });
+};
+
+window.deleteDatabase = async (id, name) => {
+  window.modal.confirm({
+    title: t.deleteDatabaseTitle || 'Delete database',
+    body: `${t.deleteDatabaseConfirm || 'This will permanently delete the database and its user from the host. This cannot be undone.'}` + (name ? ` (${name})` : ''),
+    danger: true,
+    confirmLabel: t.delete || 'Delete',
+    onConfirm: async () => {
+      try {
+        const response = await fetch(`/server/${serverId}/databases/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'csrf-token': csrfToken },
+        });
+        const result = await response.json().catch(() => ({}));
+        if (response.ok && result.success) {
+          showToast(t.databaseDeleted || 'Database deleted.', 'success');
+          const row = document.querySelector(`tr[data-db-id="${id}"]`);
+          if (row) {
+            al.removeRow(row).then(() => {
+              const tbody = document.querySelector('#server-page-body tbody');
+              if (tbody && !tbody.querySelector('tr[data-db-id]')) {
+                al.showEmpty(tbody, t.noDatabasesYet || 'No databases yet.', 6);
+              }
+            });
+          }
+          bumpDbCount(-1);
+        } else {
+          showToast(result.error || t.failedDeleteDatabase || 'Failed to delete database.', 'error');
+        }
+      } catch {
+        showToast(t.requestFailed || 'Request failed. Try again?', 'error');
+      }
+    },
+  });
+};
+
+document.querySelectorAll('tr[data-db-id]').forEach(wireDbRow);
+})();
+</script>
+
+<%- include('../../components/footer') %>
