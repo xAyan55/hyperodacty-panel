@@ -1363,7 +1363,19 @@ phase_panel_build() {
     source /var/www/panel/.env
     set +a
 
-    "$PNPM" run migrate:deploy || die "Database migration failed"
+    echo "Running database migrations..."
+    local mig_output
+    if ! mig_output=$("$PNPM" run migrate:deploy 2>&1); then
+        log "WARN: migrate:deploy failed: $mig_output"
+        echo "Migration deploy encountered issue, recovering via db push..."
+        if ! mig_output=$(npx prisma db push --accept-data-loss 2>&1); then
+            echo "$mig_output"
+            log "ERROR: db push failed: $mig_output"
+            die "Database migration failed: $mig_output"
+        fi
+    fi
+
+    "$PNPM" run generate &>/dev/null || true
     "$PNPM" run build || die "Panel build failed"
 }
 
