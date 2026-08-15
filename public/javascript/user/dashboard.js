@@ -654,13 +654,23 @@
       finishBtn.classList.toggle('hidden', currentStep !== TOTAL_STEPS - 1);
     }
 
-    function setCompleted() {
+    function setCompleted(e) {
+      if (e) e.preventDefault();
+      var targetUrl = finishBtn ? finishBtn.getAttribute('href') : null;
       fetch('/onboarding/complete', { method: 'POST' })
         .then(function () {
-          onboardingModal.remove();
+          if (targetUrl && targetUrl !== '#') {
+            window.location.href = targetUrl;
+          } else {
+            onboardingModal.remove();
+          }
         })
         .catch(function () {
-          onboardingModal.remove();
+          if (targetUrl && targetUrl !== '#') {
+            window.location.href = targetUrl;
+          } else {
+            onboardingModal.remove();
+          }
         });
     }
 
