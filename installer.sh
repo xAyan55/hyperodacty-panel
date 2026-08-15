@@ -1151,8 +1151,12 @@ phase_daemon_download() {
 
     echo "Fetching latest daemon release info..."
     local release_json
-    release_json=$(curl -fsSL --max-time 30 "${DAEMON_RELEASE_API}" 2>/dev/null) \
-        || die "Failed to fetch daemon release info from GitHub"
+    release_json=$(curl -fsSL --max-time 30 "${DAEMON_RELEASE_API}" 2>/dev/null) || true
+    if [[ -z "$release_json" || "$release_json" =~ "Not Found" ]]; then
+        log "WARN: Primary daemon release API empty/404, checking fallback"
+        release_json=$(curl -fsSL --max-time 30 "https://api.github.com/repos/airlinklabs/airlinkd/releases/latest" 2>/dev/null) || true
+    fi
+    [[ -z "$release_json" || "$release_json" =~ "Not Found" ]] && die "Failed to fetch daemon release info from GitHub"
 
     local tag
     tag=$(echo "$release_json" | python3 -c "
@@ -1177,7 +1181,28 @@ for a in assets:
         break
 " "$DAEMON_PLATFORM" "$DAEMON_ARCH" 2>/dev/null) || true
 
-    [[ -z "$asset_url" ]] && die "No daemon binary found for ${DAEMON_PLATFORM}-${DAEMON_ARCH} in release ${tag}"
+    if [[ -z "$asset_url" ]]; then
+        log "WARN: Primary release asset missing, attempting fallback release"
+        local fallback_json
+        fallback_json=$(curl -fsSL --max-time 30 "https://api.github.com/repos/airlinklabs/airlinkd/releases/latest" 2>/dev/null) || true
+        if [[ -n "$fallback_json" ]]; then
+            asset_url=$(echo "$fallback_json" | python3 -c "
+import json, sys
+platform = sys.argv[1]
+arch     = sys.argv[2]
+d = json.load(sys.stdin)
+assets = d.get('assets', [])
+needles = ['hyperodactyld-' + platform + '-' + arch + '-', 'airlinkd-' + platform + '-' + arch + '-']
+for a in assets:
+    name = a.get('name', '')
+    if any(name.startswith(n) for n in needles) and name.endswith('.zip'):
+        print(a['browser_download_url'])
+        break
+" "$DAEMON_PLATFORM" "$DAEMON_ARCH" 2>/dev/null) || true
+        fi
+    fi
+
+    [[ -z "$asset_url" ]] && die "No daemon binary found for ${DAEMON_PLATFORM}-${DAEMON_ARCH}"
     log "Downloading: $asset_url"
     echo "Downloading daemon ${tag} for ${DAEMON_PLATFORM}-${DAEMON_ARCH}..."
 
