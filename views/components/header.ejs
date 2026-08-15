@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-full js-loading" lang="<%= (req && req.lang) || 'en' %>">
+<html class="h-full" lang="<%= (req && req.lang) || 'en' %>">
 <%
 // Overview and Credits own their backgrounds — never show the panel
 // wallpaper there so their existing UX is preserved unchanged.
@@ -71,12 +71,7 @@ const wallpaperExcluded = req && req.path && (
       @media (max-width: 1023px) {
         #page-content, #server-page-body { padding-top: 56px; padding-bottom: 64px; }
       }
-      /* Pre-hide animatable content before JS runs so there's no flash-then-hide jitter */
-      .js-loading #page-content > *:not(.mobile-top-bar):not(.mobile-bottom-nav):not(.mobile-more-sheet):not([style*="position: fixed"]),
-      .js-loading #server-page-body > * {
-        opacity: 0;
-        transform: translateY(14px);
-      }
+
       /* Turbo Drive's default top progress bar is hidden: the panel draws its own page-loader overlay */
       turbo-progress-bar { visibility: hidden; }
     </style>
