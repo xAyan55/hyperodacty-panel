@@ -51,12 +51,12 @@ function readVersion(): string {
 }
 
 const ART = [
-  " █████╗ ██╗██████╗ ██╗     ██╗███╗   ██╗██╗  ██╗",
-  "██╔══██╗██║██╔══██╗██║     ██║████╗  ██║██║ ██╔╝",
-  "███████║██║██████╔╝██║     ██║██╔██╗ ██║█████╔╝ ",
-  "██╔══██║██║██╔══██╗██║     ██║██║╚██╗██║██╔═██╗ ",
-  "██║  ██║██║██║  ██║███████╗██║██║ ╚████║██║  ██╗",
-  "╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝",
+  " _   _                          _            _ _ ",
+  "| | | |_   _ _ __   ___ _ __ __| | ___   ___| | |",
+  "| |_| | | | | '_ \\ / _ \\ '__/ _` |/ _ \\ / __| | |",
+  "|  _  | |_| | |_) |  __/ | | (_| | (_) | (__| | |",
+  "|_| |_|\\__, | .__/ \\___|_|  \\__,_|\\___/ \\___|_|_|",
+  "       |___/|_|                                  ",
 ];
 
 function logPath(name: string) {
@@ -156,7 +156,7 @@ async function main() {
       cwd: PANEL_DIR,
       stdio: "inherit",
     });
-    console.log(`Airlink Panel running (headless) — PID ${child.pid ?? "?"} — Ctrl+C to stop`);
+    console.log(`Hyperodactyl Panel running (headless) — PID ${child.pid ?? "?"} — Ctrl+C to stop`);
     const exit = () => {
       child.kill("SIGTERM");
       setTimeout(() => process.exit(0), 1500);
@@ -267,11 +267,11 @@ async function main() {
       gap: 1,
       borderStyle: "rounded",
       borderColor: BORDER,
-      title: "Airlink Panel",
+      title: "Hyperodactyl Panel",
       titleColor: GREEN,
     },
     Box({ id: "art-box", flexDirection: "column" }, Text({ content: ART.join("\n"), fg: GREEN })),
-    Text({ content: `Airlink Panel v${VERSION} · ${CODENAME}`, fg: BLUE })
+    Text({ content: `Hyperodactyl Panel v${VERSION} · ${CODENAME}`, fg: BLUE })
   );
 
   const statusPanel = Box(

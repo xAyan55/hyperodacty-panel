@@ -2,20 +2,20 @@
 > # This project is a work in progress and is highly unstable
 > It is not recommended for production use. APIs, features, and data may break, change, or disappear at any time. Use at your own risk.
 
-# Airlink Panel (Katharos)
+# Hyperodactyl Panel (Katharos)
 
 Open-source game server management panel.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
-[![License](https://img.shields.io/github/license/AirlinkLabs/panel)](https://github.com/AirlinkLabs/panel/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/xAyan55/hyperodacty-panel)](https://github.com/xAyan55/hyperodacty-panel/blob/main/LICENSE)
 [![Discord](https://img.shields.io/discord/1302020587316707420)](https://discord.gg/ujXyxwwMHc)
 
 ---
 
 ## What is this?
 
-Airlink Panel is a web-based control center for deploying, monitoring, and managing game servers across multiple machines. The panel communicates with daemons running on each node to manage Docker containers, files, and SFTP.
+Hyperodactyl Panel is a web-based control center for deploying, monitoring, and managing game servers across multiple machines. The panel communicates with daemons running on each node to manage Docker containers, files, and SFTP.
 
 **Features:**
 - Web UI for admins and users (EJS templates, Tailwind CSS)
@@ -58,7 +58,7 @@ Documentation: [airlinklabs.xyz/docs/quick-start/](https://airlinklabs.xyz/docs/
 
 ```bash
 sudo su
-bash <(curl -s https://raw.githubusercontent.com/airlinklabs/panel/refs/heads/main/installer.sh)
+bash <(curl -s https://raw.githubusercontent.com/xAyan55/hyperodacty-panel/refs/heads/main/installer.sh)
 ```
 
 The installer handles Node.js, Docker, database setup, build, and systemd service creation.
@@ -76,7 +76,7 @@ journalctl -u airlink-panel -f
 
 ```bash
 cd /var/www/
-git clone https://github.com/AirlinkLabs/panel.git
+git clone https://github.com/xAyan55/hyperodacty-panel.git
 cd panel
 
 chown -R www-data:www-data /var/www/panel
@@ -110,7 +110,7 @@ Copy `example.env` to `.env` and set the required values:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NAME` | No | Panel display name (default: Airlink) |
+| `NAME` | No | Panel display name (default: Hyperodactyl) |
 | `NODE_ENV` | Yes | Set to `production` for live deployments |
 | `URL` | Yes | Full URL the panel is served from, e.g. `http://192.168.1.10:3000` |
 | `PORT` | Yes | Port to listen on |
@@ -169,7 +169,7 @@ Run `pnpm run lint` and `pnpm run typecheck` before submitting.
 - Website: [airlinklabs.xyz](https://airlinklabs.xyz/)
 - Docs: [airlinklabs.xyz/docs/quick-start](https://airlinklabs.xyz/docs/quick-start/)
 - Discord: [discord.gg/ujXyxwwMHc](https://discord.gg/ujXyxwwMHc)
-- GitHub: [github.com/airlinklabs/panel](https://github.com/airlinklabs/panel)
+- GitHub: [github.com/xAyan55/hyperodacty-panel](https://github.com/xAyan55/hyperodacty-panel)
 
 ## License
 

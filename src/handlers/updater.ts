@@ -82,7 +82,7 @@ export async function checkForUpdates(): Promise<Result<UpdateInfo, UpdateError>
       }
 
       const response = await httpGet<GithubCommit>(
-        'https://api.github.com/repos/airlinklabs/panel/commits/main',
+        'https://api.github.com/repos/xAyan55/hyperodacty-panel/commits/main',
       );
       const latestCommit = response.data;
 
@@ -100,7 +100,7 @@ export async function checkForUpdates(): Promise<Result<UpdateInfo, UpdateError>
       });
     } else {
       const response = await httpGet<GithubRelease>(
-        'https://api.github.com/repos/airlinklabs/panel/releases/latest',
+        'https://api.github.com/repos/xAyan55/hyperodacty-panel/releases/latest',
       );
       const latestRelease = response.data;
       const latestVersion = latestRelease.tag_name.replace('v', '');
@@ -113,27 +113,22 @@ export async function checkForUpdates(): Promise<Result<UpdateInfo, UpdateError>
       });
     }
   } catch (error) {
-    logger.error('Error checking for updates:', error);
-    return err('GITHUB_API_ERROR');
+    logger.error('updater', 'Failed to check for updates:', error);
+    return err('NETWORK_ERROR');
   }
 }
 
-export async function performUpdate(): Promise<Result<void, UpdateError>> {
-  if (!isGitRepo()) {
-    return err('NO_GIT_REPO');
-  }
-
+export async function performUpdate(): Promise<Result<boolean, UpdateError>> {
   try {
-    const backupDir = path.join(process.cwd(), 'backup');
-    if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir);
-    }
-
     const isDev = process.env.NODE_ENV === 'development';
 
     if (isDev) {
-      const fetchResult = spawnSyncSafe('git', ['fetch', 'origin', 'main']);
-      if (!fetchResult.success) {
+      if (!isGitRepo()) {
+        return err('NO_GIT_REPO');
+      }
+
+      const pullResult = spawnSyncSafe('git', ['pull']);
+      if (!pullResult.success) {
         return err('GIT_COMMAND_FAILED');
       }
 
@@ -143,7 +138,7 @@ export async function performUpdate(): Promise<Result<void, UpdateError>> {
       }
     } else {
       const response = await httpGet<GithubRelease>(
-        'https://api.github.com/repos/airlinklabs/panel/releases/latest',
+        'https://api.github.com/repos/xAyan55/hyperodacty-panel/releases/latest',
       );
       const latestRelease = response.data;
 

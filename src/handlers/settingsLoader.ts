@@ -8,8 +8,8 @@ export const settingsLoader = async () => {
     if (!settings) {
       await prisma.settings.create({
         data: {
-          title:                 'AirLink',
-          description:           'AirLink is a free and open source project by AirlinkLabs',
+          title:                 'Hyperodactyl',
+          description:           'Hyperodactyl is a free and open source project',
           logo:                  '../assets/logo.png',
           theme:                 'default',
           lightTheme:            'default',

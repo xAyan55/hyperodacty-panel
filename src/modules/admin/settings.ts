@@ -146,7 +146,7 @@ async function saveSettings(data: Record<string, unknown>) {
     where:  { id: 1 },
     update: data,
     create: {
-      title:    'AirLink',
+      title:    'Hyperodactyl',
       logo:     '../assets/logo.png',
       favicon:  '../assets/favicon.ico',
       lightTheme: 'default',
@@ -602,7 +602,7 @@ const adminModule: Module = {
       async (_req: Request, res: Response) => {
         try {
           await saveSettings({
-            title:             'Airlink',
+            title:             'Hyperodactyl',
             logo:              '../assets/logo.png',
             favicon:           '../assets/favicon.ico',
             lightTheme:        'default',

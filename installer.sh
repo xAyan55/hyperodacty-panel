@@ -18,9 +18,9 @@
 set -uo pipefail
 
 readonly VERSION="3.2.0-Stable"
-readonly LOG="/tmp/airlink.log"
-readonly PANEL_REPO="https://github.com/airlinklabs/panel.git"
-readonly DAEMON_RELEASE_API="https://api.github.com/repos/airlinklabs/daemon/releases/latest"
+readonly LOG="/tmp/hyperodactyl.log"
+readonly PANEL_REPO="https://github.com/xAyan55/hyperodacty-panel.git"
+readonly DAEMON_RELEASE_API="https://api.github.com/repos/xAyan55/hyperodacty-daemon/releases/latest"
 
 PNPM_REGISTRY="https://registry.npmjs.org"
 PNPM="pnpm"
@@ -108,13 +108,14 @@ _NI_SPIN_CHARS=('-' '\' '|' '/')
 
 ni_header() {
     printf "\n"
-    printf "    _    ___ ____  _     ___ _   _ _  __\n"
-    printf "   / \\  |_ _|  _ \\| |   |_ _| \\ | | |/ /\n"
-    printf "  / _ \\  | || |_) | |    | ||  \\| | ' / \n"
-    printf " / ___ \\ | ||  _ <| |___ | || |\\  | . \\ \n"
-    printf "/_/   \\_\\___|_| \\_\\_____|___|_| \\_|_|\\_\\\\\n"
+    printf " _   _                          _            _ _ \n"
+    printf "| | | |_   _ _ __   ___ _ __ __| | ___   ___| | |\n"
+    printf "| |_| | | | | '_ \\ / _ \\ '__/ _\` |/ _ \\ / __| | |\n"
+    printf "|  _  | |_| | |_) |  __/ | | (_| | (_) | (__| | |\n"
+    printf "|_| |_|\\__, | .__/ \\___|_|  \\__,_|\\___/ \\___|_|_|\n"
+    printf "       |___/|_|                                  \n"
     printf "\n"
-    printf "  ${BOLD}Airlink Installer${RESET} ${C_GRAY}v${VERSION}${RESET}  ${C_GRAY}%s${RESET}\n\n" "$(date '+%Y-%m-%d %H:%M:%S')"
+    printf "  ${BOLD}Hyperodactyl Installer${RESET} ${C_GRAY}v${VERSION}${RESET}  ${C_GRAY}%s${RESET}\n\n" "$(date '+%Y-%m-%d %H:%M:%S')"
 }
 
 ni_start() { NI_TOTAL="$1"; NI_STEP=0; }
@@ -281,11 +282,12 @@ read_key() {
 _INSTALLING=0
 
 _BANNER=(
-    "    _    ___ ____  _     ___ _   _ _  __"
-    "   / \\  |_ _|  _ \\| |   |_ _| \\ | | |/ /"
-    "  / _ \\  | || |_) | |    | ||  \\| | ' / "
-    " / ___ \\ | ||  _ <| |___ | || |\\  | . \\ "
-    "/_/   \\_\\___|_| \\_\\_____|___|_| \\_|_|\\_\\\\"
+    " _   _                          _            _ _ "
+    "| | | |_   _ _ __   ___ _ __ __| | ___   ___| | |"
+    "| |_| | | | | '_ \\ / _ \\ '__/ _\` |/ _ \\ / __| | |"
+    "|  _  | |_| | |_) |  __/ | | (_| | (_) | (__| | |"
+    "|_| |_|\\__, | .__/ \\___|_|  \\__,_|\\___/ \\___|_|_|"
+    "       |___/|_|                                  "
     ""
     "  GNU General Public License v2 -- All Rights Reserved"
 )
@@ -740,7 +742,7 @@ tui_progress_draw() {
     tui_box "$box_r" "$box_c" "$box_w" "$box_h" "Installing"
 
     move_to $(( box_r + 1 )) $(( box_c + 3 ))
-    printf "${DIM}Airlink v${VERSION}${RESET}"
+    printf "${DIM}Hyperodactyl v${VERSION}${RESET}"
     tui_hline $(( box_r + 2 )) "$box_c" "$box_w"
 
     local i
@@ -1152,7 +1154,6 @@ phase_daemon_download() {
     release_json=$(curl -fsSL --max-time 30 "${DAEMON_RELEASE_API}" 2>/dev/null) \
         || die "Failed to fetch daemon release info from GitHub"
 
-    # extract tag name for logging
     local tag
     tag=$(echo "$release_json" | python3 -c "
 import json, sys
@@ -1161,7 +1162,6 @@ print(d.get('tag_name', 'unknown'))
 " 2>/dev/null) || tag="unknown"
     log "Latest daemon release: $tag"
 
-    # find the matching asset URL — name format: airlinkd-{platform}-{arch}-{version}.zip
     local asset_url
     asset_url=$(echo "$release_json" | python3 -c "
 import json, sys
@@ -1169,20 +1169,20 @@ platform = sys.argv[1]
 arch     = sys.argv[2]
 d = json.load(sys.stdin)
 assets = d.get('assets', [])
-needle = 'airlinkd-' + platform + '-' + arch + '-'
+needles = ['hyperodactyld-' + platform + '-' + arch + '-', 'airlinkd-' + platform + '-' + arch + '-']
 for a in assets:
     name = a.get('name', '')
-    if name.startswith(needle) and name.endswith('.zip'):
+    if any(name.startswith(n) for n in needles) and name.endswith('.zip'):
         print(a['browser_download_url'])
         break
 " "$DAEMON_PLATFORM" "$DAEMON_ARCH" 2>/dev/null) || true
 
     [[ -z "$asset_url" ]] && die "No daemon binary found for ${DAEMON_PLATFORM}-${DAEMON_ARCH} in release ${tag}"
     log "Downloading: $asset_url"
-    echo "Downloading airlinkd ${tag} for ${DAEMON_PLATFORM}-${DAEMON_ARCH}..."
+    echo "Downloading daemon ${tag} for ${DAEMON_PLATFORM}-${DAEMON_ARCH}..."
 
-    local tmpdir; tmpdir=$(mktemp -d /tmp/al-daemon-XXXXXX)
-    local zipfile="${tmpdir}/airlinkd.zip"
+    local tmpdir; tmpdir=$(mktemp -d /tmp/hd-daemon-XXXXXX)
+    local zipfile="${tmpdir}/daemon.zip"
 
     curl -fsSL --max-time 120 --progress-bar -o "$zipfile" "$asset_url" \
         || die "Failed to download daemon binary"
@@ -1191,18 +1191,23 @@ for a in assets:
     unzip -o -q "$zipfile" -d "$tmpdir" \
         || die "Failed to unzip daemon binary"
 
-    # the binary inside is always named airlinkd
-    [[ -f "${tmpdir}/airlinkd" ]] \
-        || die "Binary 'airlinkd' not found inside zip (contents: $(ls "$tmpdir"))"
+    local bin_path=""
+    if [[ -f "${tmpdir}/hyperodactyld" ]]; then
+        bin_path="${tmpdir}/hyperodactyld"
+    elif [[ -f "${tmpdir}/airlinkd" ]]; then
+        bin_path="${tmpdir}/airlinkd"
+    else
+        die "Daemon binary not found inside zip (contents: $(ls "$tmpdir"))"
+    fi
 
     mkdir -p /etc/daemon
-    cp "${tmpdir}/airlinkd" /etc/daemon/airlinkd
-    chmod +x /etc/daemon/airlinkd
+    cp "$bin_path" /etc/daemon/hyperodactyld
+    chmod +x /etc/daemon/hyperodactyld
+    ln -sf /etc/daemon/hyperodactyld /etc/daemon/airlinkd
     rm -rf "$tmpdir"
 
-    log "OK: airlinkd binary installed to /etc/daemon/airlinkd"
+    log "OK: daemon binary installed to /etc/daemon/hyperodactyld"
 
-    # write .env if not already present
     if [[ ! -f /etc/daemon/.env ]]; then
         cat > /etc/daemon/.env <<ENVEOF
 remote=${PANEL_ADDRESS}
@@ -1217,9 +1222,9 @@ ENVEOF
 }
 
 phase_daemon_service() {
-    cat > /etc/systemd/system/airlink-daemon.service <<SVCEOF
+    cat > /etc/systemd/system/hyperodactyl-daemon.service <<SVCEOF
 [Unit]
-Description=Airlink Daemon
+Description=Hyperodactyl Daemon
 After=network.target docker.service
 
 [Service]
@@ -1227,7 +1232,7 @@ Type=simple
 User=root
 WorkingDirectory=/etc/daemon
 EnvironmentFile=/etc/daemon/.env
-ExecStart=/etc/daemon/airlinkd
+ExecStart=/etc/daemon/hyperodactyld
 Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production
@@ -1236,7 +1241,11 @@ Environment=NODE_ENV=production
 WantedBy=multi-user.target
 SVCEOF
     systemctl daemon-reload
-    systemctl enable --now airlink-daemon
+    if systemctl is-active --quiet airlink-daemon 2>/dev/null; then
+        systemctl disable --now airlink-daemon &>/dev/null || true
+    fi
+    rm -f /etc/systemd/system/airlink-daemon.service
+    systemctl enable --now hyperodactyl-daemon
 }
 
 # =============================================================================
@@ -1244,10 +1253,11 @@ SVCEOF
 # =============================================================================
 phase_panel_clone() {
     mkdir -p /var/www
+    mkdir -p /var/www/panel/storage
 
     if [[ -d /var/www/panel ]]; then
         echo "Panel already exists — overwriting files, keeping .env and db"
-        local tmpdir; tmpdir=$(mktemp -d /tmp/al-panel-XXXXXX)
+        local tmpdir; tmpdir=$(mktemp -d /tmp/hd-panel-XXXXXX)
         git clone --depth 1 "${PANEL_REPO}" "$tmpdir" || die "Failed to clone panel"
 
         if command -v rsync &>/dev/null; then
@@ -1264,6 +1274,7 @@ phase_panel_clone() {
         git clone --depth 1 "${PANEL_REPO}" panel || die "Failed to clone panel"
     fi
 
+    mkdir -p /var/www/panel/storage
     id www-data &>/dev/null && chown -R www-data:www-data /var/www/panel
     chmod -R 755 /var/www/panel
 
@@ -1314,6 +1325,19 @@ phase_panel_deps() {
 
 phase_panel_build() {
     cd /var/www/panel || die "Panel directory missing"
+    mkdir -p /var/www/panel/storage
+
+    if [[ ! -f /var/www/panel/.env ]]; then
+        die ".env file missing in /var/www/panel — cannot run migration"
+    fi
+    if ! grep -q '^DATABASE_URL=' /var/www/panel/.env; then
+        die "DATABASE_URL is not configured in /var/www/panel/.env"
+    fi
+
+    set -a
+    source /var/www/panel/.env
+    set +a
+
     "$PNPM" run migrate:deploy || die "Database migration failed"
     "$PNPM" run build || die "Panel build failed"
 }
@@ -1322,9 +1346,9 @@ phase_panel_service() {
     local pnpm_bin; pnpm_bin=$(command -v pnpm)
     local node_bin_dir; node_bin_dir=$(dirname "$(command -v node)")
 
-    cat > /etc/systemd/system/airlink-panel.service <<SVCEOF
+    cat > /etc/systemd/system/hyperodactyl-panel.service <<SVCEOF
 [Unit]
-Description=Airlink Panel
+Description=Hyperodactyl Panel
 After=network.target
 
 [Service]
@@ -1342,7 +1366,11 @@ Environment=PATH=${node_bin_dir}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/b
 WantedBy=multi-user.target
 SVCEOF
     systemctl daemon-reload
-    systemctl enable --now airlink-panel
+    if systemctl is-active --quiet airlink-panel 2>/dev/null; then
+        systemctl disable --now airlink-panel &>/dev/null || true
+    fi
+    rm -f /etc/systemd/system/airlink-panel.service
+    systemctl enable --now hyperodactyl-panel
     _process_addons
 }
 
@@ -1400,17 +1428,17 @@ _process_addons() {
 # Remove helpers
 # =============================================================================
 tui_remove_panel() {
-    systemctl stop    airlink-panel &>/dev/null || true
-    systemctl disable airlink-panel &>/dev/null || true
-    rm -f /etc/systemd/system/airlink-panel.service
+    systemctl stop    hyperodactyl-panel airlink-panel &>/dev/null || true
+    systemctl disable hyperodactyl-panel airlink-panel &>/dev/null || true
+    rm -f /etc/systemd/system/hyperodactyl-panel.service /etc/systemd/system/airlink-panel.service
     rm -rf /var/www/panel
     systemctl daemon-reload
 }
 
 tui_remove_daemon() {
-    systemctl stop    airlink-daemon &>/dev/null || true
-    systemctl disable airlink-daemon &>/dev/null || true
-    rm -f /etc/systemd/system/airlink-daemon.service
+    systemctl stop    hyperodactyl-daemon airlink-daemon &>/dev/null || true
+    systemctl disable hyperodactyl-daemon airlink-daemon &>/dev/null || true
+    rm -f /etc/systemd/system/hyperodactyl-daemon.service /etc/systemd/system/airlink-daemon.service
     rm -rf /etc/daemon
     systemctl daemon-reload
 }
@@ -1432,7 +1460,7 @@ ping_install_counter() {
 # =============================================================================
 # TUI config collection
 # =============================================================================
-PANEL_NAME="Airlink"
+PANEL_NAME="Hyperodactyl"
 PANEL_PORT="3000"
 PANEL_ADDRESS="127.0.0.1"
 DAEMON_PORT="3002"
@@ -1440,7 +1468,7 @@ DAEMON_KEY=""
 ADDON_CHOICES="none"
 
 tui_collect_panel_config() {
-    tui_input "Panel name" "Airlink"
+    tui_input "Panel name" "Hyperodactyl"
     PANEL_NAME="$TUI_INPUT"
 
     local err=""
@@ -1621,7 +1649,7 @@ run_interactive() {
     done
 
     tui_cleanup
-    printf "\n  Airlink Installer v${VERSION} — done\n\n"
+    printf "\n  Hyperodactyl Installer v${VERSION} — done\n\n"
 }
 
 # =============================================================================
@@ -1632,7 +1660,7 @@ run_noninteractive() {
 
     local mode="${ARG_MODE:-both}"
 
-    PANEL_NAME="${ARG_NAME:-Airlink}"
+    PANEL_NAME="${ARG_NAME:-Hyperodactyl}"
     PANEL_PORT="${ARG_PORT:-3000}"
     PANEL_ADDRESS="${ARG_PANEL_ADDR:-127.0.0.1}"
     DAEMON_PORT="${ARG_DAEMON_PORT:-3002}"
@@ -1691,7 +1719,7 @@ run_noninteractive() {
     [[ "$mode" != "daemon" ]] && printf "  ${C_GRAY}Panel :${RESET}  http://%s:%s\n" "$server_ip" "$PANEL_PORT"
     [[ "$mode" != "panel"  ]] && printf "  ${C_GRAY}Daemon:${RESET}  port %s\n" "$DAEMON_PORT"
     printf "  ${C_GRAY}Logs  :${RESET}  %s\n" "$LOG"
-    printf "  ${C_GRAY}System:${RESET}  journalctl -u airlink-panel -f\n\n"
+    printf "  ${C_GRAY}System:${RESET}  journalctl -u hyperodactyl-panel -f\n\n"
 }
 
 # =============================================================================
@@ -1700,7 +1728,7 @@ run_noninteractive() {
 [[ $EUID -eq 0 ]] || { echo "Run as root or with sudo."; exit 1; }
 
 touch "$LOG" || true
-log "=== Airlink Installer v${VERSION} started (pid $$) ==="
+log "=== Hyperodactyl Installer v${VERSION} started (pid $$) ==="
 
 parse_args "$@"
 detect_os

@@ -9,7 +9,7 @@ import logger from '../../handlers/logger';
 import { isAuthenticated } from '../../handlers/utils/auth/authUtil';
 import { getClientIp } from '../../utils/ip';
 
-const TOTP_ISSUER = 'Airlink';
+const TOTP_ISSUER = 'Hyperodactyl';
 const RECOVERY_CODE_COUNT = 10;
 
 function createTotp(secretBase32: string, label: string): OTPAuth.TOTP {

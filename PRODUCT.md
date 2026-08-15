@@ -8,13 +8,13 @@ web
 
 ## Users
 
-Airlink serves two groups. Administrators who operate the panel: they create nodes and servers, manage users and permissions, maintain images, review analytics, configure security, and handle addons. Server owners and subusers who spend most of their time inside a single server, checking status, opening the console, editing files, changing startup values, managing backups, and reviewing usage.
+Hyperodactyl serves two groups. Administrators who operate the panel: they create nodes and servers, manage users and permissions, maintain images, review analytics, configure security, and handle addons. Server owners and subusers who spend most of their time inside a single server, checking status, opening the console, editing files, changing startup values, managing backups, and reviewing usage.
 
 The interface is built for operational work. Users arrive to fix a problem, provision something new, or verify state quickly. The UI stays readable, compact, and predictable under pressure.
 
 ## Product Purpose
 
-Airlink Panel is an open-source game server management panel with a web UI for admins and users, a daemon-based node system for running containers, and an addon system for extending the panel without modifying core code.
+Hyperodactyl Panel is an open-source game server management panel with a web UI for admins and users, a daemon-based node system for running containers, and an addon system for extending the panel without modifying core code.
 
 The product makes the core control flow obvious: inspect health, provision infrastructure, manage access, edit server settings, and recover from failures without leaving the panel.
 
@@ -40,7 +40,7 @@ The UI includes toast notifications, inline banners, modal dialogs, dropdowns, c
 
 ## Anti-references
 
-Do not make Airlink look like a glossy SaaS landing page, a neon gamer dashboard, or a heavy glassmorphism demo. No loud gradients, oversized shadows, decorative motion, or novelty UI that gets in the way of administration.
+Do not make Hyperodactyl look like a glossy SaaS landing page, a neon gamer dashboard, or a heavy glassmorphism demo. No loud gradients, oversized shadows, decorative motion, or novelty UI that gets in the way of administration.
 
 Avoid gray-on-gray minimalism that sacrifices scanability. The codebase favors quiet surfaces, but never at the expense of contrast or clear affordances.
 
