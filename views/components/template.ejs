@@ -80,8 +80,7 @@
                   </li>
                 <% }); %>
               <% }); %>
-            <% } %>
-            <% if (adminMenuItems && adminMenuItems.length > 0) {
+            <% } else if (adminMenuItems && adminMenuItems.length > 0) {
               adminMenuItems.forEach(item => {
             %>
               <li class="sidebar-view-item" style="--i:<%= adminAnimIdx++ %>">
