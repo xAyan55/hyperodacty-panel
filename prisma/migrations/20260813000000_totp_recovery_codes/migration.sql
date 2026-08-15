@@ -1,2 +1,1 @@
--- AlterTable
-ALTER TABLE "Users" ADD COLUMN "totpRecoveryCodes" TEXT;
+-- Column totpRecoveryCodes already created in 20260809100711_new

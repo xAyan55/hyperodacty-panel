@@ -1,2 +1,1 @@
--- AlterTable
-ALTER TABLE "Users" ADD COLUMN "preferredNodeId" INTEGER;
+-- Column preferredNodeId already created in 20260809100711_new
