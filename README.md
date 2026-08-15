@@ -76,11 +76,11 @@ journalctl -u hyperodactyl-panel -f
 
 ```bash
 cd /var/www/
-git clone https://github.com/xAyan55/hyperodacty-panel.git panel
-cd panel
+git clone https://github.com/xAyan55/hyperodacty-panel.git
+cd hyperodacty-panel
 
-chown -R www-data:www-data /var/www/panel
-chmod -R 755 /var/www/panel
+chown -R www-data:www-data /var/www/hyperodacty-panel
+chmod -R 755 /var/www/hyperodacty-panel
 
 pnpm install
 
