@@ -113,8 +113,8 @@ export async function checkForUpdates(): Promise<Result<UpdateInfo, UpdateError>
       });
     }
   } catch (error) {
-    logger.error('updater', 'Failed to check for updates:', error);
-    return err('NETWORK_ERROR');
+    logger.error('updater', 'Failed to check for updates:', { error: String(error) });
+    return err('GITHUB_API_ERROR');
   }
 }
 
@@ -170,9 +170,9 @@ export async function performUpdate(): Promise<Result<boolean, UpdateError>> {
       }
     }
 
-    return ok(undefined);
+    return ok(true);
   } catch (error) {
-    logger.error('Error performing update:', error);
+    logger.error('updater', 'Error performing update:', { error: String(error) });
     return err('GIT_COMMAND_FAILED');
   }
 }
