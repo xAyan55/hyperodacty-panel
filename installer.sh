@@ -1620,6 +1620,9 @@ tui_view_logs() {
 # Interactive main menu
 # =============================================================================
 run_interactive() {
+    if [[ -e /dev/tty ]]; then
+        exec </dev/tty 2>/dev/null || true
+    fi
     tui_init
 
     local menu_items=(
