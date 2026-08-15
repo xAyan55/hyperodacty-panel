@@ -222,10 +222,10 @@
       const onAccount = path === '/account' || path.startsWith('/account/');
       const userText = account.querySelector('#sidebar-username');
       if (onAccount) {
-        account.style.background = pillBg;
-        account.style.color = pillFg;
-        account.style.fontWeight = '700';
-        if (userText) userText.parentElement.style.color = pillFg;
+        account.style.background = 'var(--theme-bg-secondary)';
+        account.style.color = 'var(--theme-text-strong)';
+        account.style.fontWeight = '600';
+        if (userText) userText.parentElement.style.color = 'var(--theme-text-strong)';
       } else {
         account.style.background = '';
         account.style.color = '';

@@ -415,14 +415,11 @@
     if (accountLink) {
       const onAccount = path === '/account' || path.startsWith('/account/');
       const userText = accountLink.querySelector('#sidebar-username');
-      var pillRs = getComputedStyle(document.documentElement);
-      var pillBg = pillRs.getPropertyValue('--theme-text').trim() || (isDark ? '#e0e0e0' : '#404040');
-      var pillFg = pillRs.getPropertyValue('--theme-bg').trim() || (isDark ? '#f5f5f5' : '#161616');
       if (onAccount) {
-        accountLink.style.background = pillBg;
-        accountLink.style.color = pillFg;
-        accountLink.style.fontWeight = '700';
-        if (userText) userText.parentElement.style.color = pillFg;
+        accountLink.style.background = 'var(--theme-bg-secondary)';
+        accountLink.style.color = 'var(--theme-text-strong)';
+        accountLink.style.fontWeight = '600';
+        if (userText) userText.parentElement.style.color = 'var(--theme-text-strong)';
       } else {
         accountLink.style.background = '';
         accountLink.style.color = '';
