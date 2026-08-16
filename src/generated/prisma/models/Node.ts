@@ -69,6 +69,8 @@ export type NodeMinAggregateOutputType = {
   allocatedPorts: string | null
   sftpPort: number | null
   maintenanceMode: boolean | null
+  lxcSupported: boolean | null
+  lxcCapabilities: string | null
 }
 
 export type NodeMaxAggregateOutputType = {
@@ -88,6 +90,8 @@ export type NodeMaxAggregateOutputType = {
   allocatedPorts: string | null
   sftpPort: number | null
   maintenanceMode: boolean | null
+  lxcSupported: boolean | null
+  lxcCapabilities: string | null
 }
 
 export type NodeCountAggregateOutputType = {
@@ -107,6 +111,8 @@ export type NodeCountAggregateOutputType = {
   allocatedPorts: number
   sftpPort: number
   maintenanceMode: number
+  lxcSupported: number
+  lxcCapabilities: number
   _all: number
 }
 
@@ -154,6 +160,8 @@ export type NodeMinAggregateInputType = {
   allocatedPorts?: true
   sftpPort?: true
   maintenanceMode?: true
+  lxcSupported?: true
+  lxcCapabilities?: true
 }
 
 export type NodeMaxAggregateInputType = {
@@ -173,6 +181,8 @@ export type NodeMaxAggregateInputType = {
   allocatedPorts?: true
   sftpPort?: true
   maintenanceMode?: true
+  lxcSupported?: true
+  lxcCapabilities?: true
 }
 
 export type NodeCountAggregateInputType = {
@@ -192,6 +202,8 @@ export type NodeCountAggregateInputType = {
   allocatedPorts?: true
   sftpPort?: true
   maintenanceMode?: true
+  lxcSupported?: true
+  lxcCapabilities?: true
   _all?: true
 }
 
@@ -298,6 +310,8 @@ export type NodeGroupByOutputType = {
   allocatedPorts: string | null
   sftpPort: number
   maintenanceMode: boolean
+  lxcSupported: boolean
+  lxcCapabilities: string | null
   _count: NodeCountAggregateOutputType | null
   _avg: NodeAvgAggregateOutputType | null
   _sum: NodeSumAggregateOutputType | null
@@ -340,6 +354,8 @@ export type NodeWhereInput = {
   allocatedPorts?: Prisma.StringNullableFilter<"Node"> | string | null
   sftpPort?: Prisma.IntFilter<"Node"> | number
   maintenanceMode?: Prisma.BoolFilter<"Node"> | boolean
+  lxcSupported?: Prisma.BoolFilter<"Node"> | boolean
+  lxcCapabilities?: Prisma.StringNullableFilter<"Node"> | string | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   servers?: Prisma.ServerListRelationFilter
   databaseHosts?: Prisma.DatabaseHostListRelationFilter
@@ -364,6 +380,8 @@ export type NodeOrderByWithRelationInput = {
   allocatedPorts?: Prisma.SortOrderInput | Prisma.SortOrder
   sftpPort?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  lxcSupported?: Prisma.SortOrder
+  lxcCapabilities?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.LocationOrderByWithRelationInput
   servers?: Prisma.ServerOrderByRelationAggregateInput
   databaseHosts?: Prisma.DatabaseHostOrderByRelationAggregateInput
@@ -391,6 +409,8 @@ export type NodeWhereUniqueInput = Prisma.AtLeast<{
   allocatedPorts?: Prisma.StringNullableFilter<"Node"> | string | null
   sftpPort?: Prisma.IntFilter<"Node"> | number
   maintenanceMode?: Prisma.BoolFilter<"Node"> | boolean
+  lxcSupported?: Prisma.BoolFilter<"Node"> | boolean
+  lxcCapabilities?: Prisma.StringNullableFilter<"Node"> | string | null
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   servers?: Prisma.ServerListRelationFilter
   databaseHosts?: Prisma.DatabaseHostListRelationFilter
@@ -415,6 +435,8 @@ export type NodeOrderByWithAggregationInput = {
   allocatedPorts?: Prisma.SortOrderInput | Prisma.SortOrder
   sftpPort?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  lxcSupported?: Prisma.SortOrder
+  lxcCapabilities?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.NodeCountOrderByAggregateInput
   _avg?: Prisma.NodeAvgOrderByAggregateInput
   _max?: Prisma.NodeMaxOrderByAggregateInput
@@ -442,6 +464,8 @@ export type NodeScalarWhereWithAggregatesInput = {
   allocatedPorts?: Prisma.StringNullableWithAggregatesFilter<"Node"> | string | null
   sftpPort?: Prisma.IntWithAggregatesFilter<"Node"> | number
   maintenanceMode?: Prisma.BoolWithAggregatesFilter<"Node"> | boolean
+  lxcSupported?: Prisma.BoolWithAggregatesFilter<"Node"> | boolean
+  lxcCapabilities?: Prisma.StringNullableWithAggregatesFilter<"Node"> | string | null
 }
 
 export type NodeCreateInput = {
@@ -459,6 +483,8 @@ export type NodeCreateInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   location?: Prisma.LocationCreateNestedOneWithoutNodesInput
   servers?: Prisma.ServerCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostCreateNestedManyWithoutNodeInput
@@ -483,6 +509,8 @@ export type NodeUncheckedCreateInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   servers?: Prisma.ServerUncheckedCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostUncheckedCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationUncheckedCreateNestedManyWithoutNodeInput
@@ -504,6 +532,8 @@ export type NodeUpdateInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneWithoutNodesNestedInput
   servers?: Prisma.ServerUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUpdateManyWithoutNodeNestedInput
@@ -528,6 +558,8 @@ export type NodeUncheckedUpdateInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servers?: Prisma.ServerUncheckedUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUncheckedUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUncheckedUpdateManyWithoutNodeNestedInput
@@ -551,6 +583,8 @@ export type NodeCreateManyInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
 }
 
 export type NodeUpdateManyMutationInput = {
@@ -568,6 +602,8 @@ export type NodeUpdateManyMutationInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type NodeUncheckedUpdateManyInput = {
@@ -587,6 +623,8 @@ export type NodeUncheckedUpdateManyInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type NodeNullableScalarRelationFilter = {
@@ -616,6 +654,8 @@ export type NodeCountOrderByAggregateInput = {
   allocatedPorts?: Prisma.SortOrder
   sftpPort?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  lxcSupported?: Prisma.SortOrder
+  lxcCapabilities?: Prisma.SortOrder
 }
 
 export type NodeAvgOrderByAggregateInput = {
@@ -648,6 +688,8 @@ export type NodeMaxOrderByAggregateInput = {
   allocatedPorts?: Prisma.SortOrder
   sftpPort?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  lxcSupported?: Prisma.SortOrder
+  lxcCapabilities?: Prisma.SortOrder
 }
 
 export type NodeMinOrderByAggregateInput = {
@@ -667,6 +709,8 @@ export type NodeMinOrderByAggregateInput = {
   allocatedPorts?: Prisma.SortOrder
   sftpPort?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  lxcSupported?: Prisma.SortOrder
+  lxcCapabilities?: Prisma.SortOrder
 }
 
 export type NodeSumOrderByAggregateInput = {
@@ -809,6 +853,8 @@ export type NodeCreateWithoutPreferredUsersInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   location?: Prisma.LocationCreateNestedOneWithoutNodesInput
   servers?: Prisma.ServerCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostCreateNestedManyWithoutNodeInput
@@ -832,6 +878,8 @@ export type NodeUncheckedCreateWithoutPreferredUsersInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   servers?: Prisma.ServerUncheckedCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostUncheckedCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationUncheckedCreateNestedManyWithoutNodeInput
@@ -868,6 +916,8 @@ export type NodeUpdateWithoutPreferredUsersInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneWithoutNodesNestedInput
   servers?: Prisma.ServerUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUpdateManyWithoutNodeNestedInput
@@ -891,6 +941,8 @@ export type NodeUncheckedUpdateWithoutPreferredUsersInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servers?: Prisma.ServerUncheckedUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUncheckedUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUncheckedUpdateManyWithoutNodeNestedInput
@@ -911,6 +963,8 @@ export type NodeCreateWithoutServersInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   location?: Prisma.LocationCreateNestedOneWithoutNodesInput
   databaseHosts?: Prisma.DatabaseHostCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationCreateNestedManyWithoutNodeInput
@@ -934,6 +988,8 @@ export type NodeUncheckedCreateWithoutServersInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   databaseHosts?: Prisma.DatabaseHostUncheckedCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationUncheckedCreateNestedManyWithoutNodeInput
   preferredUsers?: Prisma.UsersUncheckedCreateNestedManyWithoutPreferredNodeInput
@@ -970,6 +1026,8 @@ export type NodeUpdateWithoutServersInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneWithoutNodesNestedInput
   databaseHosts?: Prisma.DatabaseHostUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUpdateManyWithoutNodeNestedInput
@@ -993,6 +1051,8 @@ export type NodeUncheckedUpdateWithoutServersInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   databaseHosts?: Prisma.DatabaseHostUncheckedUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUncheckedUpdateManyWithoutNodeNestedInput
   preferredUsers?: Prisma.UsersUncheckedUpdateManyWithoutPreferredNodeNestedInput
@@ -1013,6 +1073,8 @@ export type NodeCreateWithoutDatabaseHostsInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   location?: Prisma.LocationCreateNestedOneWithoutNodesInput
   servers?: Prisma.ServerCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationCreateNestedManyWithoutNodeInput
@@ -1036,6 +1098,8 @@ export type NodeUncheckedCreateWithoutDatabaseHostsInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   servers?: Prisma.ServerUncheckedCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationUncheckedCreateNestedManyWithoutNodeInput
   preferredUsers?: Prisma.UsersUncheckedCreateNestedManyWithoutPreferredNodeInput
@@ -1072,6 +1136,8 @@ export type NodeUpdateWithoutDatabaseHostsInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneWithoutNodesNestedInput
   servers?: Prisma.ServerUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUpdateManyWithoutNodeNestedInput
@@ -1095,6 +1161,8 @@ export type NodeUncheckedUpdateWithoutDatabaseHostsInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servers?: Prisma.ServerUncheckedUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUncheckedUpdateManyWithoutNodeNestedInput
   preferredUsers?: Prisma.UsersUncheckedUpdateManyWithoutPreferredNodeNestedInput
@@ -1115,6 +1183,8 @@ export type NodeCreateWithoutAllocationsInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   location?: Prisma.LocationCreateNestedOneWithoutNodesInput
   servers?: Prisma.ServerCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostCreateNestedManyWithoutNodeInput
@@ -1138,6 +1208,8 @@ export type NodeUncheckedCreateWithoutAllocationsInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   servers?: Prisma.ServerUncheckedCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostUncheckedCreateNestedManyWithoutNodeInput
   preferredUsers?: Prisma.UsersUncheckedCreateNestedManyWithoutPreferredNodeInput
@@ -1174,6 +1246,8 @@ export type NodeUpdateWithoutAllocationsInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneWithoutNodesNestedInput
   servers?: Prisma.ServerUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUpdateManyWithoutNodeNestedInput
@@ -1197,6 +1271,8 @@ export type NodeUncheckedUpdateWithoutAllocationsInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servers?: Prisma.ServerUncheckedUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUncheckedUpdateManyWithoutNodeNestedInput
   preferredUsers?: Prisma.UsersUncheckedUpdateManyWithoutPreferredNodeNestedInput
@@ -1217,6 +1293,8 @@ export type NodeCreateWithoutLocationInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   servers?: Prisma.ServerCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationCreateNestedManyWithoutNodeInput
@@ -1239,6 +1317,8 @@ export type NodeUncheckedCreateWithoutLocationInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
   servers?: Prisma.ServerUncheckedCreateNestedManyWithoutNodeInput
   databaseHosts?: Prisma.DatabaseHostUncheckedCreateNestedManyWithoutNodeInput
   allocations?: Prisma.AllocationUncheckedCreateNestedManyWithoutNodeInput
@@ -1290,6 +1370,8 @@ export type NodeScalarWhereInput = {
   allocatedPorts?: Prisma.StringNullableFilter<"Node"> | string | null
   sftpPort?: Prisma.IntFilter<"Node"> | number
   maintenanceMode?: Prisma.BoolFilter<"Node"> | boolean
+  lxcSupported?: Prisma.BoolFilter<"Node"> | boolean
+  lxcCapabilities?: Prisma.StringNullableFilter<"Node"> | string | null
 }
 
 export type NodeCreateManyLocationInput = {
@@ -1308,6 +1390,8 @@ export type NodeCreateManyLocationInput = {
   allocatedPorts?: string | null
   sftpPort?: number
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: string | null
 }
 
 export type NodeUpdateWithoutLocationInput = {
@@ -1325,6 +1409,8 @@ export type NodeUpdateWithoutLocationInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servers?: Prisma.ServerUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUpdateManyWithoutNodeNestedInput
@@ -1347,6 +1433,8 @@ export type NodeUncheckedUpdateWithoutLocationInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servers?: Prisma.ServerUncheckedUpdateManyWithoutNodeNestedInput
   databaseHosts?: Prisma.DatabaseHostUncheckedUpdateManyWithoutNodeNestedInput
   allocations?: Prisma.AllocationUncheckedUpdateManyWithoutNodeNestedInput
@@ -1369,6 +1457,8 @@ export type NodeUncheckedUpdateManyWithoutLocationInput = {
   allocatedPorts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sftpPort?: Prisma.IntFieldUpdateOperationsInput | number
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcSupported?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lxcCapabilities?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1446,6 +1536,8 @@ export type NodeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   allocatedPorts?: boolean
   sftpPort?: boolean
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: boolean
   location?: boolean | Prisma.Node$locationArgs<ExtArgs>
   servers?: boolean | Prisma.Node$serversArgs<ExtArgs>
   databaseHosts?: boolean | Prisma.Node$databaseHostsArgs<ExtArgs>
@@ -1471,6 +1563,8 @@ export type NodeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   allocatedPorts?: boolean
   sftpPort?: boolean
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: boolean
   location?: boolean | Prisma.Node$locationArgs<ExtArgs>
 }, ExtArgs["result"]["node"]>
 
@@ -1491,6 +1585,8 @@ export type NodeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   allocatedPorts?: boolean
   sftpPort?: boolean
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: boolean
   location?: boolean | Prisma.Node$locationArgs<ExtArgs>
 }, ExtArgs["result"]["node"]>
 
@@ -1511,9 +1607,11 @@ export type NodeSelectScalar = {
   allocatedPorts?: boolean
   sftpPort?: boolean
   maintenanceMode?: boolean
+  lxcSupported?: boolean
+  lxcCapabilities?: boolean
 }
 
-export type NodeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ram" | "cpu" | "disk" | "overallocateMemory" | "overallocateDisk" | "overallocateCpu" | "locationId" | "address" | "port" | "key" | "createdAt" | "allocatedPorts" | "sftpPort" | "maintenanceMode", ExtArgs["result"]["node"]>
+export type NodeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ram" | "cpu" | "disk" | "overallocateMemory" | "overallocateDisk" | "overallocateCpu" | "locationId" | "address" | "port" | "key" | "createdAt" | "allocatedPorts" | "sftpPort" | "maintenanceMode" | "lxcSupported" | "lxcCapabilities", ExtArgs["result"]["node"]>
 export type NodeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location?: boolean | Prisma.Node$locationArgs<ExtArgs>
   servers?: boolean | Prisma.Node$serversArgs<ExtArgs>
@@ -1555,6 +1653,8 @@ export type $NodePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     allocatedPorts: string | null
     sftpPort: number
     maintenanceMode: boolean
+    lxcSupported: boolean
+    lxcCapabilities: string | null
   }, ExtArgs["result"]["node"]>
   composites: {}
 }
@@ -1999,6 +2099,8 @@ export interface NodeFieldRefs {
   readonly allocatedPorts: Prisma.FieldRef<"Node", 'String'>
   readonly sftpPort: Prisma.FieldRef<"Node", 'Int'>
   readonly maintenanceMode: Prisma.FieldRef<"Node", 'Boolean'>
+  readonly lxcSupported: Prisma.FieldRef<"Node", 'Boolean'>
+  readonly lxcCapabilities: Prisma.FieldRef<"Node", 'String'>
 }
     
 

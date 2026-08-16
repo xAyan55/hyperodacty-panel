@@ -118,7 +118,12 @@
                       <% } %>
                     </span>
                     <div>
-                      <div class="font-medium truncate max-w-[200px]" style="color:var(--theme-text-strong);"><%= server.name %></div>
+                      <div class="flex items-center gap-1.5">
+                        <div class="font-medium truncate max-w-[200px]" style="color:var(--theme-text-strong);"><%= server.name %></div>
+                        <% if (server.runtimeType === 'lxc') { %>
+                          <span class="al-badge-primary text-[10px] px-1.5 py-0.5 rounded font-semibold tracking-wide uppercase">VPS</span>
+                        <% } %>
+                      </div>
                       <div class="text-xs font-mono mt-0.5" style="color:var(--theme-text-muted);"><%= server.UUID %></div>
                     </div>
                   </div>

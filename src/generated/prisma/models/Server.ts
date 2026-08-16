@@ -57,6 +57,7 @@ export type ServerMinAggregateOutputType = {
   UUID: string | null
   name: string | null
   description: string | null
+  runtimeType: string | null
   createdAt: Date | null
   Ports: string | null
   Memory: number | null
@@ -84,6 +85,7 @@ export type ServerMaxAggregateOutputType = {
   UUID: string | null
   name: string | null
   description: string | null
+  runtimeType: string | null
   createdAt: Date | null
   Ports: string | null
   Memory: number | null
@@ -111,6 +113,7 @@ export type ServerCountAggregateOutputType = {
   UUID: number
   name: number
   description: number
+  runtimeType: number
   createdAt: number
   Ports: number
   Memory: number
@@ -166,6 +169,7 @@ export type ServerMinAggregateInputType = {
   UUID?: true
   name?: true
   description?: true
+  runtimeType?: true
   createdAt?: true
   Ports?: true
   Memory?: true
@@ -193,6 +197,7 @@ export type ServerMaxAggregateInputType = {
   UUID?: true
   name?: true
   description?: true
+  runtimeType?: true
   createdAt?: true
   Ports?: true
   Memory?: true
@@ -220,6 +225,7 @@ export type ServerCountAggregateInputType = {
   UUID?: true
   name?: true
   description?: true
+  runtimeType?: true
   createdAt?: true
   Ports?: true
   Memory?: true
@@ -334,6 +340,7 @@ export type ServerGroupByOutputType = {
   UUID: string
   name: string
   description: string | null
+  runtimeType: string
   createdAt: Date
   Ports: string
   Memory: number
@@ -384,6 +391,7 @@ export type ServerWhereInput = {
   UUID?: Prisma.StringFilter<"Server"> | string
   name?: Prisma.StringFilter<"Server"> | string
   description?: Prisma.StringNullableFilter<"Server"> | string | null
+  runtimeType?: Prisma.StringFilter<"Server"> | string
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   Ports?: Prisma.StringFilter<"Server"> | string
   Memory?: Prisma.IntFilter<"Server"> | number
@@ -408,6 +416,7 @@ export type ServerWhereInput = {
   node?: Prisma.XOR<Prisma.NodeScalarRelationFilter, Prisma.NodeWhereInput>
   owner?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   image?: Prisma.XOR<Prisma.ImagesScalarRelationFilter, Prisma.ImagesWhereInput>
+  vpsConfig?: Prisma.XOR<Prisma.ServerVpsConfigNullableScalarRelationFilter, Prisma.ServerVpsConfigWhereInput> | null
   backups?: Prisma.BackupListRelationFilter
   folder?: Prisma.XOR<Prisma.ServerFolderMemberNullableScalarRelationFilter, Prisma.ServerFolderMemberWhereInput> | null
   subUsers?: Prisma.SubUserListRelationFilter
@@ -423,6 +432,7 @@ export type ServerOrderByWithRelationInput = {
   UUID?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   Ports?: Prisma.SortOrder
   Memory?: Prisma.SortOrder
@@ -447,6 +457,7 @@ export type ServerOrderByWithRelationInput = {
   node?: Prisma.NodeOrderByWithRelationInput
   owner?: Prisma.UsersOrderByWithRelationInput
   image?: Prisma.ImagesOrderByWithRelationInput
+  vpsConfig?: Prisma.ServerVpsConfigOrderByWithRelationInput
   backups?: Prisma.BackupOrderByRelationAggregateInput
   folder?: Prisma.ServerFolderMemberOrderByWithRelationInput
   subUsers?: Prisma.SubUserOrderByRelationAggregateInput
@@ -465,6 +476,7 @@ export type ServerWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ServerWhereInput | Prisma.ServerWhereInput[]
   name?: Prisma.StringFilter<"Server"> | string
   description?: Prisma.StringNullableFilter<"Server"> | string | null
+  runtimeType?: Prisma.StringFilter<"Server"> | string
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   Ports?: Prisma.StringFilter<"Server"> | string
   Memory?: Prisma.IntFilter<"Server"> | number
@@ -489,6 +501,7 @@ export type ServerWhereUniqueInput = Prisma.AtLeast<{
   node?: Prisma.XOR<Prisma.NodeScalarRelationFilter, Prisma.NodeWhereInput>
   owner?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   image?: Prisma.XOR<Prisma.ImagesScalarRelationFilter, Prisma.ImagesWhereInput>
+  vpsConfig?: Prisma.XOR<Prisma.ServerVpsConfigNullableScalarRelationFilter, Prisma.ServerVpsConfigWhereInput> | null
   backups?: Prisma.BackupListRelationFilter
   folder?: Prisma.XOR<Prisma.ServerFolderMemberNullableScalarRelationFilter, Prisma.ServerFolderMemberWhereInput> | null
   subUsers?: Prisma.SubUserListRelationFilter
@@ -504,6 +517,7 @@ export type ServerOrderByWithAggregationInput = {
   UUID?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   Ports?: Prisma.SortOrder
   Memory?: Prisma.SortOrder
@@ -539,6 +553,7 @@ export type ServerScalarWhereWithAggregatesInput = {
   UUID?: Prisma.StringWithAggregatesFilter<"Server"> | string
   name?: Prisma.StringWithAggregatesFilter<"Server"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Server"> | string | null
+  runtimeType?: Prisma.StringWithAggregatesFilter<"Server"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Server"> | Date | string
   Ports?: Prisma.StringWithAggregatesFilter<"Server"> | string
   Memory?: Prisma.IntWithAggregatesFilter<"Server"> | number
@@ -565,6 +580,7 @@ export type ServerCreateInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -586,6 +602,7 @@ export type ServerCreateInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -601,6 +618,7 @@ export type ServerUncheckedCreateInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -622,6 +640,7 @@ export type ServerUncheckedCreateInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -636,6 +655,7 @@ export type ServerUpdateInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -657,6 +677,7 @@ export type ServerUpdateInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -672,6 +693,7 @@ export type ServerUncheckedUpdateInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -693,6 +715,7 @@ export type ServerUncheckedUpdateInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -708,6 +731,7 @@ export type ServerCreateManyInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -734,6 +758,7 @@ export type ServerUpdateManyMutationInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -758,6 +783,7 @@ export type ServerUncheckedUpdateManyInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -795,6 +821,7 @@ export type ServerCountOrderByAggregateInput = {
   UUID?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   Ports?: Prisma.SortOrder
   Memory?: Prisma.SortOrder
@@ -835,6 +862,7 @@ export type ServerMaxOrderByAggregateInput = {
   UUID?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   Ports?: Prisma.SortOrder
   Memory?: Prisma.SortOrder
@@ -862,6 +890,7 @@ export type ServerMinOrderByAggregateInput = {
   UUID?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   Ports?: Prisma.SortOrder
   Memory?: Prisma.SortOrder
@@ -947,6 +976,20 @@ export type ServerUncheckedUpdateManyWithoutOwnerNestedInput = {
   update?: Prisma.ServerUpdateWithWhereUniqueWithoutOwnerInput | Prisma.ServerUpdateWithWhereUniqueWithoutOwnerInput[]
   updateMany?: Prisma.ServerUpdateManyWithWhereWithoutOwnerInput | Prisma.ServerUpdateManyWithWhereWithoutOwnerInput[]
   deleteMany?: Prisma.ServerScalarWhereInput | Prisma.ServerScalarWhereInput[]
+}
+
+export type ServerCreateNestedOneWithoutVpsConfigInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutVpsConfigInput, Prisma.ServerUncheckedCreateWithoutVpsConfigInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutVpsConfigInput
+  connect?: Prisma.ServerWhereUniqueInput
+}
+
+export type ServerUpdateOneRequiredWithoutVpsConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutVpsConfigInput, Prisma.ServerUncheckedCreateWithoutVpsConfigInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutVpsConfigInput
+  upsert?: Prisma.ServerUpsertWithoutVpsConfigInput
+  connect?: Prisma.ServerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutVpsConfigInput, Prisma.ServerUpdateWithoutVpsConfigInput>, Prisma.ServerUncheckedUpdateWithoutVpsConfigInput>
 }
 
 export type ServerCreateNestedOneWithoutServerMountsInput = {
@@ -1167,6 +1210,7 @@ export type ServerCreateWithoutOwnerInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1187,6 +1231,7 @@ export type ServerCreateWithoutOwnerInput = {
   sftpCredential?: Prisma.SftpCredentialCreateNestedOneWithoutServerInput
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -1202,6 +1247,7 @@ export type ServerUncheckedCreateWithoutOwnerInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1222,6 +1268,7 @@ export type ServerUncheckedCreateWithoutOwnerInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -1265,6 +1312,7 @@ export type ServerScalarWhereInput = {
   UUID?: Prisma.StringFilter<"Server"> | string
   name?: Prisma.StringFilter<"Server"> | string
   description?: Prisma.StringNullableFilter<"Server"> | string | null
+  runtimeType?: Prisma.StringFilter<"Server"> | string
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   Ports?: Prisma.StringFilter<"Server"> | string
   Memory?: Prisma.IntFilter<"Server"> | number
@@ -1287,10 +1335,11 @@ export type ServerScalarWhereInput = {
   imageId?: Prisma.IntFilter<"Server"> | number
 }
 
-export type ServerCreateWithoutServerMountsInput = {
+export type ServerCreateWithoutVpsConfigInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1319,13 +1368,15 @@ export type ServerCreateWithoutServerMountsInput = {
   databases?: Prisma.ServerDatabaseCreateNestedManyWithoutServerInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutServerInput
   allocations?: Prisma.AllocationCreateNestedManyWithoutServerInput
+  serverMounts?: Prisma.ServerMountCreateNestedManyWithoutServerInput
 }
 
-export type ServerUncheckedCreateWithoutServerMountsInput = {
+export type ServerUncheckedCreateWithoutVpsConfigInput = {
   id?: number
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1347,6 +1398,169 @@ export type ServerUncheckedCreateWithoutServerMountsInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
+  folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
+  subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
+  schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutServerInput
+  databases?: Prisma.ServerDatabaseUncheckedCreateNestedManyWithoutServerInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutServerInput
+  allocations?: Prisma.AllocationUncheckedCreateNestedManyWithoutServerInput
+  serverMounts?: Prisma.ServerMountUncheckedCreateNestedManyWithoutServerInput
+}
+
+export type ServerCreateOrConnectWithoutVpsConfigInput = {
+  where: Prisma.ServerWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServerCreateWithoutVpsConfigInput, Prisma.ServerUncheckedCreateWithoutVpsConfigInput>
+}
+
+export type ServerUpsertWithoutVpsConfigInput = {
+  update: Prisma.XOR<Prisma.ServerUpdateWithoutVpsConfigInput, Prisma.ServerUncheckedUpdateWithoutVpsConfigInput>
+  create: Prisma.XOR<Prisma.ServerCreateWithoutVpsConfigInput, Prisma.ServerUncheckedCreateWithoutVpsConfigInput>
+  where?: Prisma.ServerWhereInput
+}
+
+export type ServerUpdateToOneWithWhereWithoutVpsConfigInput = {
+  where?: Prisma.ServerWhereInput
+  data: Prisma.XOR<Prisma.ServerUpdateWithoutVpsConfigInput, Prisma.ServerUncheckedUpdateWithoutVpsConfigInput>
+}
+
+export type ServerUpdateWithoutVpsConfigInput = {
+  UUID?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Ports?: Prisma.StringFieldUpdateOperationsInput | string
+  Memory?: Prisma.IntFieldUpdateOperationsInput | number
+  Swap?: Prisma.IntFieldUpdateOperationsInput | number
+  Cpu?: Prisma.IntFieldUpdateOperationsInput | number
+  Storage?: Prisma.IntFieldUpdateOperationsInput | number
+  Variables?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  StartCommand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dockerImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowStartupEdit?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Installing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Queued?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Running?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  backupIgnoreList?: Prisma.StringFieldUpdateOperationsInput | string
+  databaseLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  sftpCredential?: Prisma.SftpCredentialUpdateOneWithoutServerNestedInput
+  node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
+  owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
+  image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
+  folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
+  subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
+  schedules?: Prisma.ScheduleUpdateManyWithoutServerNestedInput
+  databases?: Prisma.ServerDatabaseUpdateManyWithoutServerNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutServerNestedInput
+  allocations?: Prisma.AllocationUpdateManyWithoutServerNestedInput
+  serverMounts?: Prisma.ServerMountUpdateManyWithoutServerNestedInput
+}
+
+export type ServerUncheckedUpdateWithoutVpsConfigInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  UUID?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Ports?: Prisma.StringFieldUpdateOperationsInput | string
+  Memory?: Prisma.IntFieldUpdateOperationsInput | number
+  Swap?: Prisma.IntFieldUpdateOperationsInput | number
+  Cpu?: Prisma.IntFieldUpdateOperationsInput | number
+  Storage?: Prisma.IntFieldUpdateOperationsInput | number
+  Variables?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  StartCommand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dockerImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowStartupEdit?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Installing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Queued?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  Running?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  backupIgnoreList?: Prisma.StringFieldUpdateOperationsInput | string
+  databaseLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.IntFieldUpdateOperationsInput | number
+  nodeId?: Prisma.IntFieldUpdateOperationsInput | number
+  imageId?: Prisma.IntFieldUpdateOperationsInput | number
+  sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
+  folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
+  subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
+  schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutServerNestedInput
+  databases?: Prisma.ServerDatabaseUncheckedUpdateManyWithoutServerNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutServerNestedInput
+  allocations?: Prisma.AllocationUncheckedUpdateManyWithoutServerNestedInput
+  serverMounts?: Prisma.ServerMountUncheckedUpdateManyWithoutServerNestedInput
+}
+
+export type ServerCreateWithoutServerMountsInput = {
+  UUID?: string
+  name: string
+  description?: string | null
+  runtimeType?: string
+  createdAt?: Date | string
+  Ports: string
+  Memory: number
+  Swap?: number
+  Cpu: number
+  Storage: number
+  Variables?: string | null
+  StartCommand?: string | null
+  dockerImage?: string | null
+  allowStartupEdit?: boolean
+  Installing?: boolean
+  Queued?: boolean
+  Suspended?: boolean
+  Running?: boolean
+  backupLimit?: number
+  backupIgnoreList?: string
+  databaseLimit?: number
+  sftpCredential?: Prisma.SftpCredentialCreateNestedOneWithoutServerInput
+  node: Prisma.NodeCreateNestedOneWithoutServersInput
+  owner: Prisma.UsersCreateNestedOneWithoutServersInput
+  image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
+  backups?: Prisma.BackupCreateNestedManyWithoutServerInput
+  folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
+  subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
+  schedules?: Prisma.ScheduleCreateNestedManyWithoutServerInput
+  databases?: Prisma.ServerDatabaseCreateNestedManyWithoutServerInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutServerInput
+  allocations?: Prisma.AllocationCreateNestedManyWithoutServerInput
+}
+
+export type ServerUncheckedCreateWithoutServerMountsInput = {
+  id?: number
+  UUID?: string
+  name: string
+  description?: string | null
+  runtimeType?: string
+  createdAt?: Date | string
+  Ports: string
+  Memory: number
+  Swap?: number
+  Cpu: number
+  Storage: number
+  Variables?: string | null
+  StartCommand?: string | null
+  dockerImage?: string | null
+  allowStartupEdit?: boolean
+  Installing?: boolean
+  Queued?: boolean
+  Suspended?: boolean
+  Running?: boolean
+  backupLimit?: number
+  backupIgnoreList?: string
+  databaseLimit?: number
+  ownerId: number
+  nodeId: number
+  imageId: number
+  sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -1376,6 +1590,7 @@ export type ServerUpdateWithoutServerMountsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1397,6 +1612,7 @@ export type ServerUpdateWithoutServerMountsInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -1411,6 +1627,7 @@ export type ServerUncheckedUpdateWithoutServerMountsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1432,6 +1649,7 @@ export type ServerUncheckedUpdateWithoutServerMountsInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -1445,6 +1663,7 @@ export type ServerCreateWithoutDatabasesInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1466,6 +1685,7 @@ export type ServerCreateWithoutDatabasesInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -1480,6 +1700,7 @@ export type ServerUncheckedCreateWithoutDatabasesInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1501,6 +1722,7 @@ export type ServerUncheckedCreateWithoutDatabasesInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -1530,6 +1752,7 @@ export type ServerUpdateWithoutDatabasesInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1551,6 +1774,7 @@ export type ServerUpdateWithoutDatabasesInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -1565,6 +1789,7 @@ export type ServerUncheckedUpdateWithoutDatabasesInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1586,6 +1811,7 @@ export type ServerUncheckedUpdateWithoutDatabasesInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -1599,6 +1825,7 @@ export type ServerCreateWithoutSchedulesInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1620,6 +1847,7 @@ export type ServerCreateWithoutSchedulesInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -1634,6 +1862,7 @@ export type ServerUncheckedCreateWithoutSchedulesInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1655,6 +1884,7 @@ export type ServerUncheckedCreateWithoutSchedulesInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -1684,6 +1914,7 @@ export type ServerUpdateWithoutSchedulesInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1705,6 +1936,7 @@ export type ServerUpdateWithoutSchedulesInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -1719,6 +1951,7 @@ export type ServerUncheckedUpdateWithoutSchedulesInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1740,6 +1973,7 @@ export type ServerUncheckedUpdateWithoutSchedulesInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -1753,6 +1987,7 @@ export type ServerCreateWithoutImageInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1773,6 +2008,7 @@ export type ServerCreateWithoutImageInput = {
   sftpCredential?: Prisma.SftpCredentialCreateNestedOneWithoutServerInput
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -1788,6 +2024,7 @@ export type ServerUncheckedCreateWithoutImageInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1808,6 +2045,7 @@ export type ServerUncheckedCreateWithoutImageInput = {
   ownerId: number
   nodeId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -1847,6 +2085,7 @@ export type ServerCreateWithoutAllocationsInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1868,6 +2107,7 @@ export type ServerCreateWithoutAllocationsInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -1882,6 +2122,7 @@ export type ServerUncheckedCreateWithoutAllocationsInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -1903,6 +2144,7 @@ export type ServerUncheckedCreateWithoutAllocationsInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -1932,6 +2174,7 @@ export type ServerUpdateWithoutAllocationsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1953,6 +2196,7 @@ export type ServerUpdateWithoutAllocationsInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -1967,6 +2211,7 @@ export type ServerUncheckedUpdateWithoutAllocationsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1988,6 +2233,7 @@ export type ServerUncheckedUpdateWithoutAllocationsInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -2001,6 +2247,7 @@ export type ServerCreateWithoutNodeInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2021,6 +2268,7 @@ export type ServerCreateWithoutNodeInput = {
   sftpCredential?: Prisma.SftpCredentialCreateNestedOneWithoutServerInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -2036,6 +2284,7 @@ export type ServerUncheckedCreateWithoutNodeInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2056,6 +2305,7 @@ export type ServerUncheckedCreateWithoutNodeInput = {
   ownerId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -2095,6 +2345,7 @@ export type ServerCreateWithoutFolderInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2116,6 +2367,7 @@ export type ServerCreateWithoutFolderInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutServerInput
@@ -2130,6 +2382,7 @@ export type ServerUncheckedCreateWithoutFolderInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2151,6 +2404,7 @@ export type ServerUncheckedCreateWithoutFolderInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutServerInput
@@ -2180,6 +2434,7 @@ export type ServerUpdateWithoutFolderInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2201,6 +2456,7 @@ export type ServerUpdateWithoutFolderInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutServerNestedInput
@@ -2215,6 +2471,7 @@ export type ServerUncheckedUpdateWithoutFolderInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2236,6 +2493,7 @@ export type ServerUncheckedUpdateWithoutFolderInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutServerNestedInput
@@ -2249,6 +2507,7 @@ export type ServerCreateWithoutBackupsInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2270,6 +2529,7 @@ export type ServerCreateWithoutBackupsInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutServerInput
@@ -2284,6 +2544,7 @@ export type ServerUncheckedCreateWithoutBackupsInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2305,6 +2566,7 @@ export type ServerUncheckedCreateWithoutBackupsInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutServerInput
@@ -2334,6 +2596,7 @@ export type ServerUpdateWithoutBackupsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2355,6 +2618,7 @@ export type ServerUpdateWithoutBackupsInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutServerNestedInput
@@ -2369,6 +2633,7 @@ export type ServerUncheckedUpdateWithoutBackupsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2390,6 +2655,7 @@ export type ServerUncheckedUpdateWithoutBackupsInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutServerNestedInput
@@ -2403,6 +2669,7 @@ export type ServerCreateWithoutSftpCredentialInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2423,6 +2690,7 @@ export type ServerCreateWithoutSftpCredentialInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -2438,6 +2706,7 @@ export type ServerUncheckedCreateWithoutSftpCredentialInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2458,6 +2727,7 @@ export type ServerUncheckedCreateWithoutSftpCredentialInput = {
   ownerId: number
   nodeId: number
   imageId: number
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -2488,6 +2758,7 @@ export type ServerUpdateWithoutSftpCredentialInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2508,6 +2779,7 @@ export type ServerUpdateWithoutSftpCredentialInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -2523,6 +2795,7 @@ export type ServerUncheckedUpdateWithoutSftpCredentialInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2543,6 +2816,7 @@ export type ServerUncheckedUpdateWithoutSftpCredentialInput = {
   ownerId?: Prisma.IntFieldUpdateOperationsInput | number
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -2557,6 +2831,7 @@ export type ServerCreateWithoutSubUsersInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2578,6 +2853,7 @@ export type ServerCreateWithoutSubUsersInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutServerInput
@@ -2592,6 +2868,7 @@ export type ServerUncheckedCreateWithoutSubUsersInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2613,6 +2890,7 @@ export type ServerUncheckedCreateWithoutSubUsersInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutServerInput
@@ -2642,6 +2920,7 @@ export type ServerUpdateWithoutSubUsersInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2663,6 +2942,7 @@ export type ServerUpdateWithoutSubUsersInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutServerNestedInput
@@ -2677,6 +2957,7 @@ export type ServerUncheckedUpdateWithoutSubUsersInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2698,6 +2979,7 @@ export type ServerUncheckedUpdateWithoutSubUsersInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutServerNestedInput
@@ -2711,6 +2993,7 @@ export type ServerCreateWithoutActivityLogsInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2732,6 +3015,7 @@ export type ServerCreateWithoutActivityLogsInput = {
   node: Prisma.NodeCreateNestedOneWithoutServersInput
   owner: Prisma.UsersCreateNestedOneWithoutServersInput
   image: Prisma.ImagesCreateNestedOneWithoutServersInput
+  vpsConfig?: Prisma.ServerVpsConfigCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserCreateNestedManyWithoutServerInput
@@ -2746,6 +3030,7 @@ export type ServerUncheckedCreateWithoutActivityLogsInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2767,6 +3052,7 @@ export type ServerUncheckedCreateWithoutActivityLogsInput = {
   nodeId: number
   imageId: number
   sftpCredential?: Prisma.SftpCredentialUncheckedCreateNestedOneWithoutServerInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedCreateNestedOneWithoutServerInput
   backups?: Prisma.BackupUncheckedCreateNestedManyWithoutServerInput
   folder?: Prisma.ServerFolderMemberUncheckedCreateNestedOneWithoutServerInput
   subUsers?: Prisma.SubUserUncheckedCreateNestedManyWithoutServerInput
@@ -2796,6 +3082,7 @@ export type ServerUpdateWithoutActivityLogsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2817,6 +3104,7 @@ export type ServerUpdateWithoutActivityLogsInput = {
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -2831,6 +3119,7 @@ export type ServerUncheckedUpdateWithoutActivityLogsInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2852,6 +3141,7 @@ export type ServerUncheckedUpdateWithoutActivityLogsInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -2866,6 +3156,7 @@ export type ServerCreateManyOwnerInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -2891,6 +3182,7 @@ export type ServerUpdateWithoutOwnerInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2911,6 +3203,7 @@ export type ServerUpdateWithoutOwnerInput = {
   sftpCredential?: Prisma.SftpCredentialUpdateOneWithoutServerNestedInput
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -2926,6 +3219,7 @@ export type ServerUncheckedUpdateWithoutOwnerInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2946,6 +3240,7 @@ export type ServerUncheckedUpdateWithoutOwnerInput = {
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -2961,6 +3256,7 @@ export type ServerUncheckedUpdateManyWithoutOwnerInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2987,6 +3283,7 @@ export type ServerCreateManyImageInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -3012,6 +3309,7 @@ export type ServerUpdateWithoutImageInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3032,6 +3330,7 @@ export type ServerUpdateWithoutImageInput = {
   sftpCredential?: Prisma.SftpCredentialUpdateOneWithoutServerNestedInput
   node?: Prisma.NodeUpdateOneRequiredWithoutServersNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -3047,6 +3346,7 @@ export type ServerUncheckedUpdateWithoutImageInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3067,6 +3367,7 @@ export type ServerUncheckedUpdateWithoutImageInput = {
   ownerId?: Prisma.IntFieldUpdateOperationsInput | number
   nodeId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -3082,6 +3383,7 @@ export type ServerUncheckedUpdateManyWithoutImageInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3108,6 +3410,7 @@ export type ServerCreateManyNodeInput = {
   UUID?: string
   name: string
   description?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   Ports: string
   Memory: number
@@ -3133,6 +3436,7 @@ export type ServerUpdateWithoutNodeInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3153,6 +3457,7 @@ export type ServerUpdateWithoutNodeInput = {
   sftpCredential?: Prisma.SftpCredentialUpdateOneWithoutServerNestedInput
   owner?: Prisma.UsersUpdateOneRequiredWithoutServersNestedInput
   image?: Prisma.ImagesUpdateOneRequiredWithoutServersNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUpdateManyWithoutServerNestedInput
@@ -3168,6 +3473,7 @@ export type ServerUncheckedUpdateWithoutNodeInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3188,6 +3494,7 @@ export type ServerUncheckedUpdateWithoutNodeInput = {
   ownerId?: Prisma.IntFieldUpdateOperationsInput | number
   imageId?: Prisma.IntFieldUpdateOperationsInput | number
   sftpCredential?: Prisma.SftpCredentialUncheckedUpdateOneWithoutServerNestedInput
+  vpsConfig?: Prisma.ServerVpsConfigUncheckedUpdateOneWithoutServerNestedInput
   backups?: Prisma.BackupUncheckedUpdateManyWithoutServerNestedInput
   folder?: Prisma.ServerFolderMemberUncheckedUpdateOneWithoutServerNestedInput
   subUsers?: Prisma.SubUserUncheckedUpdateManyWithoutServerNestedInput
@@ -3203,6 +3510,7 @@ export type ServerUncheckedUpdateManyWithoutNodeInput = {
   UUID?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Ports?: Prisma.StringFieldUpdateOperationsInput | string
   Memory?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3314,6 +3622,7 @@ export type ServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   UUID?: boolean
   name?: boolean
   description?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   Ports?: boolean
   Memory?: boolean
@@ -3338,6 +3647,7 @@ export type ServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   node?: boolean | Prisma.NodeDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   image?: boolean | Prisma.ImagesDefaultArgs<ExtArgs>
+  vpsConfig?: boolean | Prisma.Server$vpsConfigArgs<ExtArgs>
   backups?: boolean | Prisma.Server$backupsArgs<ExtArgs>
   folder?: boolean | Prisma.Server$folderArgs<ExtArgs>
   subUsers?: boolean | Prisma.Server$subUsersArgs<ExtArgs>
@@ -3354,6 +3664,7 @@ export type ServerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   UUID?: boolean
   name?: boolean
   description?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   Ports?: boolean
   Memory?: boolean
@@ -3384,6 +3695,7 @@ export type ServerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   UUID?: boolean
   name?: boolean
   description?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   Ports?: boolean
   Memory?: boolean
@@ -3414,6 +3726,7 @@ export type ServerSelectScalar = {
   UUID?: boolean
   name?: boolean
   description?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   Ports?: boolean
   Memory?: boolean
@@ -3436,12 +3749,13 @@ export type ServerSelectScalar = {
   imageId?: boolean
 }
 
-export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "UUID" | "name" | "description" | "createdAt" | "Ports" | "Memory" | "Swap" | "Cpu" | "Storage" | "Variables" | "StartCommand" | "dockerImage" | "allowStartupEdit" | "Installing" | "Queued" | "Suspended" | "Running" | "backupLimit" | "backupIgnoreList" | "databaseLimit" | "ownerId" | "nodeId" | "imageId", ExtArgs["result"]["server"]>
+export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "UUID" | "name" | "description" | "runtimeType" | "createdAt" | "Ports" | "Memory" | "Swap" | "Cpu" | "Storage" | "Variables" | "StartCommand" | "dockerImage" | "allowStartupEdit" | "Installing" | "Queued" | "Suspended" | "Running" | "backupLimit" | "backupIgnoreList" | "databaseLimit" | "ownerId" | "nodeId" | "imageId", ExtArgs["result"]["server"]>
 export type ServerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sftpCredential?: boolean | Prisma.Server$sftpCredentialArgs<ExtArgs>
   node?: boolean | Prisma.NodeDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   image?: boolean | Prisma.ImagesDefaultArgs<ExtArgs>
+  vpsConfig?: boolean | Prisma.Server$vpsConfigArgs<ExtArgs>
   backups?: boolean | Prisma.Server$backupsArgs<ExtArgs>
   folder?: boolean | Prisma.Server$folderArgs<ExtArgs>
   subUsers?: boolean | Prisma.Server$subUsersArgs<ExtArgs>
@@ -3470,6 +3784,7 @@ export type $ServerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     node: Prisma.$NodePayload<ExtArgs>
     owner: Prisma.$UsersPayload<ExtArgs>
     image: Prisma.$ImagesPayload<ExtArgs>
+    vpsConfig: Prisma.$ServerVpsConfigPayload<ExtArgs> | null
     backups: Prisma.$BackupPayload<ExtArgs>[]
     folder: Prisma.$ServerFolderMemberPayload<ExtArgs> | null
     subUsers: Prisma.$SubUserPayload<ExtArgs>[]
@@ -3484,6 +3799,7 @@ export type $ServerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     UUID: string
     name: string
     description: string | null
+    runtimeType: string
     createdAt: Date
     Ports: string
     Memory: number
@@ -3902,6 +4218,7 @@ export interface Prisma__ServerClient<T, Null = never, ExtArgs extends runtime.T
   node<T extends Prisma.NodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NodeDefaultArgs<ExtArgs>>): Prisma.Prisma__NodeClient<runtime.Types.Result.GetResult<Prisma.$NodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   owner<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   image<T extends Prisma.ImagesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ImagesDefaultArgs<ExtArgs>>): Prisma.Prisma__ImagesClient<runtime.Types.Result.GetResult<Prisma.$ImagesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  vpsConfig<T extends Prisma.Server$vpsConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$vpsConfigArgs<ExtArgs>>): Prisma.Prisma__ServerVpsConfigClient<runtime.Types.Result.GetResult<Prisma.$ServerVpsConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   backups<T extends Prisma.Server$backupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$backupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BackupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   folder<T extends Prisma.Server$folderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$folderArgs<ExtArgs>>): Prisma.Prisma__ServerFolderMemberClient<runtime.Types.Result.GetResult<Prisma.$ServerFolderMemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   subUsers<T extends Prisma.Server$subUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$subUsersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3943,6 +4260,7 @@ export interface ServerFieldRefs {
   readonly UUID: Prisma.FieldRef<"Server", 'String'>
   readonly name: Prisma.FieldRef<"Server", 'String'>
   readonly description: Prisma.FieldRef<"Server", 'String'>
+  readonly runtimeType: Prisma.FieldRef<"Server", 'String'>
   readonly createdAt: Prisma.FieldRef<"Server", 'DateTime'>
   readonly Ports: Prisma.FieldRef<"Server", 'String'>
   readonly Memory: Prisma.FieldRef<"Server", 'Int'>
@@ -4378,6 +4696,25 @@ export type Server$sftpCredentialArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   include?: Prisma.SftpCredentialInclude<ExtArgs> | null
   where?: Prisma.SftpCredentialWhereInput
+}
+
+/**
+ * Server.vpsConfig
+ */
+export type Server$vpsConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServerVpsConfig
+   */
+  select?: Prisma.ServerVpsConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ServerVpsConfig
+   */
+  omit?: Prisma.ServerVpsConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServerVpsConfigInclude<ExtArgs> | null
+  where?: Prisma.ServerVpsConfigWhereInput
 }
 
 /**

@@ -55,6 +55,7 @@ export const ModelName = {
   PasswordReset: 'PasswordReset',
   Session: 'Session',
   Server: 'Server',
+  ServerVpsConfig: 'ServerVpsConfig',
   Mount: 'Mount',
   ServerMount: 'ServerMount',
   DatabaseHost: 'DatabaseHost',
@@ -151,6 +152,7 @@ export const ServerScalarFieldEnum = {
   UUID: 'UUID',
   name: 'name',
   description: 'description',
+  runtimeType: 'runtimeType',
   createdAt: 'createdAt',
   Ports: 'Ports',
   Memory: 'Memory',
@@ -174,6 +176,25 @@ export const ServerScalarFieldEnum = {
 } as const
 
 export type ServerScalarFieldEnum = (typeof ServerScalarFieldEnum)[keyof typeof ServerScalarFieldEnum]
+
+
+export const ServerVpsConfigScalarFieldEnum = {
+  id: 'id',
+  serverId: 'serverId',
+  distribution: 'distribution',
+  release: 'release',
+  architecture: 'architecture',
+  hostname: 'hostname',
+  ipv4: 'ipv4',
+  ipv6: 'ipv6',
+  gateway: 'gateway',
+  nameservers: 'nameservers',
+  unprivileged: 'unprivileged',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServerVpsConfigScalarFieldEnum = (typeof ServerVpsConfigScalarFieldEnum)[keyof typeof ServerVpsConfigScalarFieldEnum]
 
 
 export const MountScalarFieldEnum = {
@@ -257,9 +278,11 @@ export const ImagesScalarFieldEnum = {
   description: 'description',
   author: 'author',
   authorName: 'authorName',
+  runtimeType: 'runtimeType',
   createdAt: 'createdAt',
   meta: 'meta',
   dockerImages: 'dockerImages',
+  lxcConfig: 'lxcConfig',
   startup: 'startup',
   stop: 'stop',
   startup_done: 'startup_done',
@@ -304,7 +327,9 @@ export const NodeScalarFieldEnum = {
   createdAt: 'createdAt',
   allocatedPorts: 'allocatedPorts',
   sftpPort: 'sftpPort',
-  maintenanceMode: 'maintenanceMode'
+  maintenanceMode: 'maintenanceMode',
+  lxcSupported: 'lxcSupported',
+  lxcCapabilities: 'lxcCapabilities'
 } as const
 
 export type NodeScalarFieldEnum = (typeof NodeScalarFieldEnum)[keyof typeof NodeScalarFieldEnum]

@@ -59,8 +59,16 @@ describe('pathSecurity: containPath symlink resolution', () => {
     beforeEach();
     try {
       const linkPath = path.join(tmpDir, 'escape-link');
-      fs.symlinkSync('/etc/passwd', linkPath);
-      expect(containPath(tmpDir, linkPath)).toBe(false);
+      try {
+        fs.symlinkSync('/etc/passwd', linkPath);
+        expect(containPath(tmpDir, linkPath)).toBe(false);
+      } catch (err: unknown) {
+        // Windows unprivileged environments throw EPERM for symlinks
+        if ((err as { code?: string })?.code === 'EPERM') {
+          return;
+        }
+        throw err;
+      }
     } finally {
       afterEach();
     }

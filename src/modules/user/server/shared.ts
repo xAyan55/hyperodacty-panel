@@ -199,6 +199,7 @@ export type ServerRuntimeConfig = Pick<
   | 'Storage'
   | 'Variables'
   | 'dockerImage'
+  | 'runtimeType'
   | 'node'
 >;
 
@@ -250,9 +251,6 @@ export async function stopServerContainer(
     throw error;
   }
   if (releaseResources) {
-    // The container is down — free its reservation so stopped servers stop
-    // consuming node capacity. Restart passes releaseResources:false to keep
-    // the reservation held across the stop/start cycle.
     await prisma.server.update({ where: { UUID: serverId }, data: { Running: false } }).catch(() => {});
   }
   emitRealtime(serverEvent('server.power.stopped', serverId, { state: { running: false } }));
@@ -268,14 +266,68 @@ export async function startServerContainer(
     mounts?: { source: string; target: string; readOnly?: boolean }[];
   } = {},
 ): Promise<void> {
+  if (server.runtimeType === 'lxc') {
+    await assertNodeCapacity(
+      server.node,
+      server.Memory,
+      server.Cpu,
+      server.Storage,
+      serverId,
+      { runningOnly: true },
+    );
+
+    let startResponse;
+    emitRealtime(serverEvent('server.power.start.started', serverId));
+    try {
+      startResponse = await daemonRequest({
+        method: 'POST',
+        path: '/container/start',
+        nodeAddress: server.node.address,
+        nodePort: server.node.port,
+        nodeKey: server.node.key,
+        body: {
+          id: serverId,
+          runtimeType: 'lxc',
+          Memory: server.Memory,
+          Swap: server.Swap ?? 0,
+          Cpu: server.Cpu,
+          Storage: server.Storage,
+        },
+      });
+    } catch (error) {
+      emitRealtime(
+        serverEvent('server.power.start.failed', serverId, {
+          error: { message: 'The daemon could not start the server.', code: 'DAEMON_UNREACHABLE' },
+        }),
+      );
+      throw new Error('daemon is unreachable — is it running?', { cause: error });
+    }
+
+    if (startResponse.status >= 400) {
+      const body =
+        typeof startResponse.data === 'object' && startResponse.data !== null
+          ? (startResponse.data as { error?: string; detail?: string })
+          : {};
+      const rawDetail = `${body.error ?? 'request failed'}${body.detail ? ' — ' + body.detail : ''}`;
+      emitRealtime(
+        serverEvent('server.power.start.failed', serverId, {
+          error: { message: 'The daemon could not start the server.', code: 'DAEMON_START_FAILED' },
+          state: { detail: rawDetail },
+        }),
+      );
+      throw new Error('The daemon could not start the server.', { cause: `daemon: ${rawDetail}` });
+    }
+
+    await prisma.server.update({ where: { UUID: serverId }, data: { Running: true } }).catch(() => {});
+    emitRealtime(serverEvent('server.power.started', serverId, { state: { running: true } }));
+    return;
+  }
+
   const dockerImage = options.dockerImage ?? getConfiguredDockerImage(server);
   if (!dockerImage) {
     throw new Error('Docker image not found.');
   }
 
-  // Runtime capacity gate: only running servers consume node capacity, so a
-  // stopped server's resources are immediately available again. The starting
-  // server is excluded so restart can keep its own reservation held.
   await assertNodeCapacity(
     server.node,
     server.Memory,

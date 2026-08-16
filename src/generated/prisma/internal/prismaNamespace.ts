@@ -401,6 +401,7 @@ export const ModelName = {
   PasswordReset: 'PasswordReset',
   Session: 'Session',
   Server: 'Server',
+  ServerVpsConfig: 'ServerVpsConfig',
   Mount: 'Mount',
   ServerMount: 'ServerMount',
   DatabaseHost: 'DatabaseHost',
@@ -438,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "users" | "passwordReset" | "session" | "server" | "mount" | "serverMount" | "databaseHost" | "serverDatabase" | "schedule" | "scheduleTask" | "images" | "allocation" | "node" | "location" | "settings" | "serverFolder" | "serverFolderMember" | "apiKey" | "loginHistory" | "playerStats" | "addon" | "addonSetting" | "backup" | "sftpCredential" | "subUser" | "activityLog"
+    modelProps: "users" | "passwordReset" | "session" | "server" | "serverVpsConfig" | "mount" | "serverMount" | "databaseHost" | "serverDatabase" | "schedule" | "scheduleTask" | "images" | "allocation" | "node" | "location" | "settings" | "serverFolder" | "serverFolderMember" | "apiKey" | "loginHistory" | "playerStats" | "addon" | "addonSetting" | "backup" | "sftpCredential" | "subUser" | "activityLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -735,6 +736,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ServerCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ServerCountAggregateOutputType> | number
+        }
+      }
+    }
+    ServerVpsConfig: {
+      payload: Prisma.$ServerVpsConfigPayload<ExtArgs>
+      fields: Prisma.ServerVpsConfigFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ServerVpsConfigFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ServerVpsConfigFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>
+        }
+        findFirst: {
+          args: Prisma.ServerVpsConfigFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ServerVpsConfigFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>
+        }
+        findMany: {
+          args: Prisma.ServerVpsConfigFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>[]
+        }
+        create: {
+          args: Prisma.ServerVpsConfigCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>
+        }
+        createMany: {
+          args: Prisma.ServerVpsConfigCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ServerVpsConfigCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>[]
+        }
+        delete: {
+          args: Prisma.ServerVpsConfigDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>
+        }
+        update: {
+          args: Prisma.ServerVpsConfigUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>
+        }
+        deleteMany: {
+          args: Prisma.ServerVpsConfigDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ServerVpsConfigUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ServerVpsConfigUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>[]
+        }
+        upsert: {
+          args: Prisma.ServerVpsConfigUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerVpsConfigPayload>
+        }
+        aggregate: {
+          args: Prisma.ServerVpsConfigAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateServerVpsConfig>
+        }
+        groupBy: {
+          args: Prisma.ServerVpsConfigGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServerVpsConfigGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ServerVpsConfigCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServerVpsConfigCountAggregateOutputType> | number
         }
       }
     }
@@ -2461,6 +2536,7 @@ export const ServerScalarFieldEnum = {
   UUID: 'UUID',
   name: 'name',
   description: 'description',
+  runtimeType: 'runtimeType',
   createdAt: 'createdAt',
   Ports: 'Ports',
   Memory: 'Memory',
@@ -2484,6 +2560,25 @@ export const ServerScalarFieldEnum = {
 } as const
 
 export type ServerScalarFieldEnum = (typeof ServerScalarFieldEnum)[keyof typeof ServerScalarFieldEnum]
+
+
+export const ServerVpsConfigScalarFieldEnum = {
+  id: 'id',
+  serverId: 'serverId',
+  distribution: 'distribution',
+  release: 'release',
+  architecture: 'architecture',
+  hostname: 'hostname',
+  ipv4: 'ipv4',
+  ipv6: 'ipv6',
+  gateway: 'gateway',
+  nameservers: 'nameservers',
+  unprivileged: 'unprivileged',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServerVpsConfigScalarFieldEnum = (typeof ServerVpsConfigScalarFieldEnum)[keyof typeof ServerVpsConfigScalarFieldEnum]
 
 
 export const MountScalarFieldEnum = {
@@ -2567,9 +2662,11 @@ export const ImagesScalarFieldEnum = {
   description: 'description',
   author: 'author',
   authorName: 'authorName',
+  runtimeType: 'runtimeType',
   createdAt: 'createdAt',
   meta: 'meta',
   dockerImages: 'dockerImages',
+  lxcConfig: 'lxcConfig',
   startup: 'startup',
   stop: 'stop',
   startup_done: 'startup_done',
@@ -2614,7 +2711,9 @@ export const NodeScalarFieldEnum = {
   createdAt: 'createdAt',
   allocatedPorts: 'allocatedPorts',
   sftpPort: 'sftpPort',
-  maintenanceMode: 'maintenanceMode'
+  maintenanceMode: 'maintenanceMode',
+  lxcSupported: 'lxcSupported',
+  lxcCapabilities: 'lxcCapabilities'
 } as const
 
 export type NodeScalarFieldEnum = (typeof NodeScalarFieldEnum)[keyof typeof NodeScalarFieldEnum]
@@ -3052,6 +3151,7 @@ export type GlobalOmitConfig = {
   passwordReset?: Prisma.PasswordResetOmit
   session?: Prisma.SessionOmit
   server?: Prisma.ServerOmit
+  serverVpsConfig?: Prisma.ServerVpsConfigOmit
   mount?: Prisma.MountOmit
   serverMount?: Prisma.ServerMountOmit
   databaseHost?: Prisma.DatabaseHostOmit

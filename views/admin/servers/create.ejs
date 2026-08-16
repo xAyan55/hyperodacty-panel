@@ -69,6 +69,53 @@
                   </select>
                 <div class="custom-select mt-2" data-for="serverNode"></div>
               </div>
+              <div class="md:col-span-2">
+                <label class="al-label" for="runtimeType">
+                  <%- icon('layers', { size: 14, class: 'shrink-0' }) %>
+                  Workload Type:
+                </label>
+                <select id="runtimeType" name="runtimeType" class="al-input mt-2">
+                  <option value="docker" selected>Game Server (Docker)</option>
+                  <option value="lxc">VPS Instance (LXC)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="vpsConfigCard" class="al-card hidden">
+            <h2 class="al-card-header">VPS Configuration (LXC)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="al-label" for="vpsDistribution">Distribution:</label>
+                <select id="vpsDistribution" name="vpsDistribution" class="al-input mt-2">
+                  <option value="ubuntu" selected>Ubuntu</option>
+                  <option value="debian">Debian</option>
+                  <option value="alpine">Alpine Linux</option>
+                </select>
+              </div>
+              <div>
+                <label class="al-label" for="vpsRelease">Release / Version:</label>
+                <input id="vpsRelease" name="vpsRelease" class="al-input mt-2" placeholder="24.04 (Ubuntu) / 12 (Debian) / 3.20 (Alpine)" value="24.04">
+              </div>
+              <div>
+                <label class="al-label" for="vpsArchitecture">Architecture:</label>
+                <select id="vpsArchitecture" name="vpsArchitecture" class="al-input mt-2">
+                  <option value="amd64" selected>amd64 (x86_64)</option>
+                  <option value="arm64">arm64 (aarch64)</option>
+                </select>
+              </div>
+              <div>
+                <label class="al-label" for="vpsHostname">Hostname:</label>
+                <input id="vpsHostname" name="vpsHostname" class="al-input mt-2" placeholder="vps.local">
+              </div>
+              <div>
+                <label class="al-label" for="vpsIpv4">Static IPv4 (Optional):</label>
+                <input id="vpsIpv4" name="vpsIpv4" class="al-input mt-2" placeholder="192.168.1.100/24 (Leave blank for DHCP)">
+              </div>
+              <div>
+                <label class="al-label" for="vpsGateway">Gateway (Optional):</label>
+                <input id="vpsGateway" name="vpsGateway" class="al-input mt-2" placeholder="192.168.1.1">
+              </div>
             </div>
           </div>
 
@@ -146,7 +193,7 @@
             </div>
           </div>
 
-          <div class="al-card">
+          <div id="startupCard" class="al-card">
             <h2 class="al-card-header">Startup</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
@@ -204,7 +251,7 @@
             </div>
           </div>
 
-          <div class="al-card">
+          <div id="variablesCard" class="al-card">
             <div class="collapsible-row no-anim" id="variablesSectionRow">
               <div>
                 <div id="variablesSection">
@@ -432,6 +479,29 @@
         })
         .catch(error => { loader.close(); console.error('Error:', error); showToast('Failed to create server: ' + error.message, 'error'); });
     });
+
+    const runtimeTypeSelect = document.getElementById('runtimeType');
+    const vpsConfigCard = document.getElementById('vpsConfigCard');
+    const startupCard = document.getElementById('startupCard');
+    const variablesCard = document.getElementById('variablesCard');
+
+    function syncWorkloadUI() {
+      const isLxc = runtimeTypeSelect?.value === 'lxc';
+      if (isLxc) {
+        vpsConfigCard?.classList.remove('hidden');
+        startupCard?.classList.add('hidden');
+        variablesCard?.classList.add('hidden');
+      } else {
+        vpsConfigCard?.classList.add('hidden');
+        startupCard?.classList.remove('hidden');
+        variablesCard?.classList.remove('hidden');
+      }
+    }
+
+    if (runtimeTypeSelect) {
+      runtimeTypeSelect.addEventListener('change', syncWorkloadUI);
+      syncWorkloadUI();
+    }
 
     fetchNodesData();
     updateDockerImages();

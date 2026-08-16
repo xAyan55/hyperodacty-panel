@@ -38,6 +38,11 @@ export type Session = Prisma.SessionModel
  */
 export type Server = Prisma.ServerModel
 /**
+ * Model ServerVpsConfig
+ * 
+ */
+export type ServerVpsConfig = Prisma.ServerVpsConfigModel
+/**
  * Model Mount
  * 
  */

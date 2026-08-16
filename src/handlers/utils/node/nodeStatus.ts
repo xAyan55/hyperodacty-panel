@@ -2,12 +2,14 @@ import { isHttpError } from '../../../utils/http';
 import { daemonInfoSchema, parseDaemonResponse } from '../../../platform/daemon/dtos';
 import { daemonRequest } from '../core/daemonRequest';
 import logger from '../../logger';
+import prisma from '../../../db';
 
 const NODE_STATUS_TIMEOUT_MS = 3000;
 const NODE_STATUS_ONLINE = 'Online';
 const NODE_STATUS_OFFLINE = 'Offline';
 
 interface Node {
+  id?: number;
   address: string;
   port: number;
   key: string;
@@ -16,6 +18,8 @@ interface Node {
   versionRelease?: string;
   remote?: boolean;
   error?: string;
+  lxcSupported?: boolean;
+  lxcCapabilities?: string | null;
 }
 
 export async function checkNodeStatus(node: Node): Promise<Node> {
@@ -39,6 +43,32 @@ export async function checkNodeStatus(node: Node): Promise<Node> {
     node.versionRelease = versionRelease;
     node.remote = remote;
     node.error = undefined;
+
+    // Check LXC capabilities for registered nodes
+    if (node.id) {
+      try {
+        const capsRes = await daemonRequest<{ lxc?: { available?: boolean } }>({
+          nodeAddress: node.address,
+          nodePort: node.port,
+          nodeKey: node.key,
+          method: 'GET',
+          path: '/capabilities',
+          timeout: NODE_STATUS_TIMEOUT_MS,
+        });
+
+        const isLxc = capsRes.data?.lxc?.available === true;
+        node.lxcSupported = isLxc;
+        node.lxcCapabilities = JSON.stringify(capsRes.data?.lxc ?? {});
+
+        await prisma.node.update({
+          where: { id: node.id },
+          data: {
+            lxcSupported: isLxc,
+            lxcCapabilities: JSON.stringify(capsRes.data?.lxc ?? {}),
+          },
+        }).catch(() => {});
+      } catch {}
+    }
 
     return node;
   } catch (error) {

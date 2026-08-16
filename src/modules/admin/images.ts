@@ -36,6 +36,8 @@ function normalizeImageData(raw: Record<string, unknown>) {
     description: String(raw.description ?? ''),
     author: String(raw.author ?? ''),
     authorName: String(raw.authorName ?? ''),
+    runtimeType: String(raw.runtimeType ?? 'docker'),
+    lxcConfig: typeof raw.lxcConfig === 'object' ? JSON.stringify(raw.lxcConfig) : (typeof raw.lxcConfig === 'string' ? raw.lxcConfig : null),
     startup: String(raw.startup ?? ''),
     stop: String(raw.stop ?? ''),
     startup_done: String(raw.startup_done ?? ''),

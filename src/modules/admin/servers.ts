@@ -399,6 +399,7 @@ const adminModule: Module = {
           description,
           nodeId,
           imageId,
+          runtimeType = 'docker',
           Ports,
           ports,
           Memory,
@@ -410,15 +411,24 @@ const adminModule: Module = {
           ownerId,
           databaseLimit,
           allowStartupEdit,
+          vpsDistribution,
+          vpsRelease,
+          vpsArchitecture,
+          vpsHostname,
+          vpsIpv4,
+          vpsGateway,
+          vpsNameservers,
         } = req.body;
 
         const userId = parseInt(String(ownerId), 10);
+        const isLxc = runtimeType === 'lxc';
+
         if (
           !name ||
           !description ||
           !nodeId ||
           !imageId ||
-          (!Ports && !ports) ||
+          (!isLxc && !Ports && !ports) ||
           !Memory ||
           !Cpu ||
           !Storage ||
@@ -443,7 +453,7 @@ const adminModule: Module = {
           return;
         }
 
-        // Validate that the selected port is allocated to the node and not already in use
+        // Validate node and resources
         let minPorts = 0;
         try {
           const node = await prisma.node.findUnique({
@@ -460,13 +470,9 @@ const adminModule: Module = {
             return;
           }
 
-          const pool = await getNodePortPool(parseInt(nodeId));
-
-          const existingServers = await prisma.server.findMany({
-            where: {
-              nodeId: parseInt(nodeId)
-            }
-          });
+          if (isLxc && !node.lxcSupported) {
+            logger.warn(`Node ${node.id} does not report LXC support, but admin requested LXC creation`);
+          }
 
           const image = await prisma.images.findUnique({ where: { id: parseInt(imageId) } });
           if (!image) {
@@ -474,28 +480,39 @@ const adminModule: Module = {
             return;
           }
 
-          const submittedPorts = ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`);
-          minPorts = parseImagePortRequirements(image.portRequirements).length;
-          const portError = validatePortAssignments(submittedPorts, pool, getUsedExternalPorts(existingServers), minPorts);
-          if (portError) {
-            res.status(400).json({ error: portError });
-            return;
+          if (!isLxc) {
+            const pool = await getNodePortPool(parseInt(nodeId));
+            const existingServers = await prisma.server.findMany({
+              where: {
+                nodeId: parseInt(nodeId)
+              }
+            });
+
+            const submittedPorts = ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`);
+            minPorts = parseImagePortRequirements(image.portRequirements).length;
+            const portError = validatePortAssignments(submittedPorts, pool, getUsedExternalPorts(existingServers), minPorts);
+            if (portError) {
+              res.status(400).json({ error: portError });
+              return;
+            }
           }
 
           await assertNodeCapacity(
             node,
-            parseInt(Memory) || 1024,
-            parseInt(Cpu) || 100,
-            parseInt(Storage) || 20480,
+            memInt,
+            cpuInt,
+            storageInt,
           );
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : 'Error validating port allocation';
+            const message = error instanceof Error ? error.message : 'Error validating server resources';
             logger.error('Error validating server resources:', error);
             res.status(400).json({ error: message });
             return;
           }
 
-        const Port = serializeServerPorts(ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`));
+        const Port = isLxc
+          ? '[]'
+          : serializeServerPorts(ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`));
 
         try {
           const selectedImage = await prisma.images.findUnique({
@@ -509,95 +526,139 @@ const adminModule: Module = {
             return;
           }
 
-          const dockerImagesRaw = selectedImage.dockerImages;
-          if (!dockerImagesRaw) {
-            res.status(400).json({ error: 'Docker image not found' });
-            return;
-          }
-
-          type ImageDocker = { [key: string]: string };
-
-          const imagesDocker: ImageDocker[] = JSON.parse(dockerImagesRaw);
-          const imageDocker: ImageDocker | undefined = imagesDocker.find(
-            (image: ImageDocker) => Object.keys(image).includes(dockerImage),
-          );
-
-          if (!imageDocker) {
-            res.status(400).json({ error: 'Docker image not found' });
-            return;
-          }
-
-          const StartCommand = selectedImage.startup;
-
-          if (!StartCommand) {
-            res.status(400).json({ error: 'Image startup command not found' });
-            return;
-          }
-
-          // Merge submitted variable values into the egg variable definitions
-          let imageVariables: Record<string, unknown>[] = [];
-          try {
-            imageVariables = JSON.parse(selectedImage.variables || '[]');
-          } catch {
-            imageVariables = [];
-          }
-
-          const submittedVars = Array.isArray(variables) ? variables : [];
-          const mergedVariables = imageVariables.map((imgVar: Record<string, unknown>) => {
-            const envKey = String(imgVar.env_variable ?? imgVar.env ?? '');
-            const submitted = submittedVars.find(
-              (sv: Record<string, unknown>) => String(sv.env_variable ?? sv.env ?? '') === envKey,
-            );
-            return { ...imgVar, value: submitted?.value ?? imgVar.default_value ?? '' };
-          });
-
-          // Create server — under a per-node lock so the port pool doesn't race
-          // with other concurrent creates on the same node.
-          const submittedExternal = (ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`))
-            .map((p) => p.externalPort);
-
           let createdServer;
-          try {
-            createdServer = await withNodePortLock(parseInt(nodeId), async () => {
-              const livePool = await getNodePortPool(parseInt(nodeId));
-              const liveServers = await prisma.server.findMany({ where: { nodeId: parseInt(nodeId) } });
-              const recheck = validatePortAssignments(
-                ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`),
-                livePool,
-                getUsedExternalPorts(liveServers),
-                minPorts,
-              );
-              if (recheck) throw new Error(recheck);
 
-              const created = await prisma.server.create({
-                data: {
-                  name,
-                  description,
-                  ownerId: userId,
-                  nodeId: parseInt(nodeId),
-                  imageId: parseInt(imageId),
-                  Ports: Port || '[{"Port": "25565:25565", "primary": true}]',
-                  Memory: memInt,
-                  Swap: swapInt,
-                  Cpu: cpuInt,
-                  databaseLimit: databaseLimit !== undefined && databaseLimit !== '' ? Math.max(0, parseInt(databaseLimit) || 0) : 5,
-                  Storage: storageInt,
-                  Variables: JSON.stringify(mergedVariables),
-                  StartCommand,
-                  dockerImage: JSON.stringify(imageDocker),
-                },
-              });
+          if (isLxc) {
+            // LXC Server creation path
+            let lxcConfigObj: { distribution?: string; release?: string; architecture?: string } = {};
+            try {
+              if (selectedImage.lxcConfig) lxcConfigObj = JSON.parse(selectedImage.lxcConfig);
+            } catch {}
 
-              await prisma.$executeRaw`UPDATE "Server" SET "allowStartupEdit" = ${allowStartupEdit === 'true'} WHERE "id" = ${created.id}`;
-              await claimNodePorts(parseInt(nodeId), submittedExternal, created.UUID).catch((err: unknown) => {
-                logger.warn(`Failed to claim ports for server ${created.UUID}: ${err instanceof Error ? err.message : err}`);
-              });
-              return created;
+            const dist = vpsDistribution || lxcConfigObj.distribution || 'ubuntu';
+            const rel = vpsRelease || lxcConfigObj.release || '24.04';
+            const arch = vpsArchitecture || lxcConfigObj.architecture || 'amd64';
+
+            createdServer = await prisma.server.create({
+              data: {
+                name,
+                description,
+                runtimeType: 'lxc',
+                ownerId: userId,
+                nodeId: parseInt(nodeId),
+                imageId: parseInt(imageId),
+                Ports: Port,
+                Memory: memInt,
+                Swap: swapInt,
+                Cpu: cpuInt,
+                databaseLimit: databaseLimit !== undefined && databaseLimit !== '' ? Math.max(0, parseInt(databaseLimit) || 0) : 0,
+                Storage: storageInt,
+                Variables: '[]',
+                StartCommand: null,
+                dockerImage: null,
+              },
             });
-          } catch (error: unknown) {
-            logger.error('Error creating server:', error);
-            res.status(400).send(error instanceof Error ? error.message : 'Failed to create server.');
-            return;
+
+            await prisma.serverVpsConfig.create({
+              data: {
+                serverId: createdServer.UUID,
+                distribution: dist,
+                release: rel,
+                architecture: arch,
+                hostname: vpsHostname || name,
+                ipv4: vpsIpv4 || null,
+                gateway: vpsGateway || null,
+                nameservers: vpsNameservers ? JSON.stringify(vpsNameservers) : '[]',
+                unprivileged: true,
+              },
+            });
+          } else {
+            // Existing Docker Game Server creation path
+            const dockerImagesRaw = selectedImage.dockerImages;
+            if (!dockerImagesRaw) {
+              res.status(400).json({ error: 'Docker image not found' });
+              return;
+            }
+
+            type ImageDocker = { [key: string]: string };
+            const imagesDocker: ImageDocker[] = JSON.parse(dockerImagesRaw);
+            const imageDocker: ImageDocker | undefined = imagesDocker.find(
+              (img: ImageDocker) => Object.keys(img).includes(dockerImage),
+            );
+
+            if (!imageDocker) {
+              res.status(400).json({ error: 'Docker image not found' });
+              return;
+            }
+
+            const StartCommand = selectedImage.startup;
+            if (!StartCommand) {
+              res.status(400).json({ error: 'Image startup command not found' });
+              return;
+            }
+
+            let imageVariables: Record<string, unknown>[] = [];
+            try {
+              imageVariables = JSON.parse(selectedImage.variables || '[]');
+            } catch {
+              imageVariables = [];
+            }
+
+            const submittedVars = Array.isArray(variables) ? variables : [];
+            const mergedVariables = imageVariables.map((imgVar: Record<string, unknown>) => {
+              const envKey = String(imgVar.env_variable ?? imgVar.env ?? '');
+              const submitted = submittedVars.find(
+                (sv: Record<string, unknown>) => String(sv.env_variable ?? sv.env ?? '') === envKey,
+              );
+              return { ...imgVar, value: submitted?.value ?? imgVar.default_value ?? '' };
+            });
+
+            const submittedExternal = (ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`))
+              .map((p) => p.externalPort);
+
+            try {
+              createdServer = await withNodePortLock(parseInt(nodeId), async () => {
+                const livePool = await getNodePortPool(parseInt(nodeId));
+                const liveServers = await prisma.server.findMany({ where: { nodeId: parseInt(nodeId) } });
+                const recheck = validatePortAssignments(
+                  ports ? normalizeServerPorts(ports) : parseServerPorts(`[{"Port":"${Ports}","primary":true}]`),
+                  livePool,
+                  getUsedExternalPorts(liveServers),
+                  minPorts,
+                );
+                if (recheck) throw new Error(recheck);
+
+                const created = await prisma.server.create({
+                  data: {
+                    name,
+                    description,
+                    runtimeType: 'docker',
+                    ownerId: userId,
+                    nodeId: parseInt(nodeId),
+                    imageId: parseInt(imageId),
+                    Ports: Port || '[{"Port": "25565:25565", "primary": true}]',
+                    Memory: memInt,
+                    Swap: swapInt,
+                    Cpu: cpuInt,
+                    databaseLimit: databaseLimit !== undefined && databaseLimit !== '' ? Math.max(0, parseInt(databaseLimit) || 0) : 5,
+                    Storage: storageInt,
+                    Variables: JSON.stringify(mergedVariables),
+                    StartCommand,
+                    dockerImage: JSON.stringify(imageDocker),
+                  },
+                });
+
+                await prisma.$executeRaw`UPDATE "Server" SET "allowStartupEdit" = ${allowStartupEdit === 'true'} WHERE "id" = ${created.id}`;
+                await claimNodePorts(parseInt(nodeId), submittedExternal, created.UUID).catch((err: unknown) => {
+                  logger.warn(`Failed to claim ports for server ${created.UUID}: ${err instanceof Error ? err.message : err}`);
+                });
+                return created;
+              });
+            } catch (error: unknown) {
+              logger.error('Error creating server:', error);
+              res.status(400).send(error instanceof Error ? error.message : 'Failed to create server.');
+              return;
+            }
           }
 
           queueer.addTask(async () => {
@@ -608,6 +669,7 @@ const adminModule: Module = {
               include: {
                 image: true,
                 node: true,
+                vpsConfig: true,
               },
             });
 
@@ -616,6 +678,49 @@ const adminModule: Module = {
                 operationId: server.UUID,
                 state: { queued: true, installing: true },
               }));
+
+              if (server.runtimeType === 'lxc') {
+                try {
+                  await daemonRequest({
+                    nodeAddress: server.node.address,
+                    nodePort: server.node.port,
+                    nodeKey: server.node.key,
+                    method: 'POST',
+                    path: '/container/lxc/create',
+                    body: {
+                      id: server.UUID,
+                      distribution: server.vpsConfig?.distribution || 'ubuntu',
+                      release: server.vpsConfig?.release || '24.04',
+                      architecture: server.vpsConfig?.architecture || 'amd64',
+                      hostname: server.vpsConfig?.hostname || server.name,
+                      memoryMb: server.Memory,
+                      cpuQuota: server.Cpu,
+                      storageMb: server.Storage,
+                      swapMb: server.Swap,
+                      ipv4: server.vpsConfig?.ipv4 || undefined,
+                      gateway: server.vpsConfig?.gateway || undefined,
+                      nameservers: server.vpsConfig?.nameservers ? JSON.parse(server.vpsConfig.nameservers) : undefined,
+                      unprivileged: server.vpsConfig?.unprivileged ?? true,
+                    },
+                    timeout: 600000,
+                  });
+
+                  await prisma.server.update({ where: { id: server.id }, data: { Queued: false, Installing: false } });
+                  emitRealtime(serverEvent('server.install.completed', server.UUID, {
+                    operationId: server.UUID,
+                    state: { installing: false, queued: false },
+                  }));
+                } catch (error: unknown) {
+                  logger.error(`Error sending LXC create request for server ID ${server.id}:`, error);
+                  await prisma.server.update({ where: { id: server.id }, data: { Queued: false, Installing: false } });
+                  emitRealtime(serverEvent('server.install.failed', server.UUID, {
+                    operationId: server.UUID,
+                    error: { message: error instanceof Error ? error.message : 'LXC creation failed' },
+                  }));
+                }
+                continue;
+              }
+
               if (!server.Variables) {
                 await prisma.server.update({
                   where: { id: server.id },

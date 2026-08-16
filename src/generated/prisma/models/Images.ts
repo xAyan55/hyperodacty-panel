@@ -43,9 +43,11 @@ export type ImagesMinAggregateOutputType = {
   description: string | null
   author: string | null
   authorName: string | null
+  runtimeType: string | null
   createdAt: Date | null
   meta: string | null
   dockerImages: string | null
+  lxcConfig: string | null
   startup: string | null
   stop: string | null
   startup_done: string | null
@@ -66,9 +68,11 @@ export type ImagesMaxAggregateOutputType = {
   description: string | null
   author: string | null
   authorName: string | null
+  runtimeType: string | null
   createdAt: Date | null
   meta: string | null
   dockerImages: string | null
+  lxcConfig: string | null
   startup: string | null
   stop: string | null
   startup_done: string | null
@@ -89,9 +93,11 @@ export type ImagesCountAggregateOutputType = {
   description: number
   author: number
   authorName: number
+  runtimeType: number
   createdAt: number
   meta: number
   dockerImages: number
+  lxcConfig: number
   startup: number
   stop: number
   startup_done: number
@@ -124,9 +130,11 @@ export type ImagesMinAggregateInputType = {
   description?: true
   author?: true
   authorName?: true
+  runtimeType?: true
   createdAt?: true
   meta?: true
   dockerImages?: true
+  lxcConfig?: true
   startup?: true
   stop?: true
   startup_done?: true
@@ -147,9 +155,11 @@ export type ImagesMaxAggregateInputType = {
   description?: true
   author?: true
   authorName?: true
+  runtimeType?: true
   createdAt?: true
   meta?: true
   dockerImages?: true
+  lxcConfig?: true
   startup?: true
   stop?: true
   startup_done?: true
@@ -170,9 +180,11 @@ export type ImagesCountAggregateInputType = {
   description?: true
   author?: true
   authorName?: true
+  runtimeType?: true
   createdAt?: true
   meta?: true
   dockerImages?: true
+  lxcConfig?: true
   startup?: true
   stop?: true
   startup_done?: true
@@ -280,9 +292,11 @@ export type ImagesGroupByOutputType = {
   description: string | null
   author: string | null
   authorName: string | null
+  runtimeType: string
   createdAt: Date
   meta: string | null
   dockerImages: string | null
+  lxcConfig: string | null
   startup: string | null
   stop: string | null
   startup_done: string | null
@@ -326,9 +340,11 @@ export type ImagesWhereInput = {
   description?: Prisma.StringNullableFilter<"Images"> | string | null
   author?: Prisma.StringNullableFilter<"Images"> | string | null
   authorName?: Prisma.StringNullableFilter<"Images"> | string | null
+  runtimeType?: Prisma.StringFilter<"Images"> | string
   createdAt?: Prisma.DateTimeFilter<"Images"> | Date | string
   meta?: Prisma.StringNullableFilter<"Images"> | string | null
   dockerImages?: Prisma.StringNullableFilter<"Images"> | string | null
+  lxcConfig?: Prisma.StringNullableFilter<"Images"> | string | null
   startup?: Prisma.StringNullableFilter<"Images"> | string | null
   stop?: Prisma.StringNullableFilter<"Images"> | string | null
   startup_done?: Prisma.StringNullableFilter<"Images"> | string | null
@@ -350,9 +366,11 @@ export type ImagesOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   author?: Prisma.SortOrderInput | Prisma.SortOrder
   authorName?: Prisma.SortOrderInput | Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   meta?: Prisma.SortOrderInput | Prisma.SortOrder
   dockerImages?: Prisma.SortOrderInput | Prisma.SortOrder
+  lxcConfig?: Prisma.SortOrderInput | Prisma.SortOrder
   startup?: Prisma.SortOrderInput | Prisma.SortOrder
   stop?: Prisma.SortOrderInput | Prisma.SortOrder
   startup_done?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -377,9 +395,11 @@ export type ImagesWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Images"> | string | null
   author?: Prisma.StringNullableFilter<"Images"> | string | null
   authorName?: Prisma.StringNullableFilter<"Images"> | string | null
+  runtimeType?: Prisma.StringFilter<"Images"> | string
   createdAt?: Prisma.DateTimeFilter<"Images"> | Date | string
   meta?: Prisma.StringNullableFilter<"Images"> | string | null
   dockerImages?: Prisma.StringNullableFilter<"Images"> | string | null
+  lxcConfig?: Prisma.StringNullableFilter<"Images"> | string | null
   startup?: Prisma.StringNullableFilter<"Images"> | string | null
   stop?: Prisma.StringNullableFilter<"Images"> | string | null
   startup_done?: Prisma.StringNullableFilter<"Images"> | string | null
@@ -401,9 +421,11 @@ export type ImagesOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   author?: Prisma.SortOrderInput | Prisma.SortOrder
   authorName?: Prisma.SortOrderInput | Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   meta?: Prisma.SortOrderInput | Prisma.SortOrder
   dockerImages?: Prisma.SortOrderInput | Prisma.SortOrder
+  lxcConfig?: Prisma.SortOrderInput | Prisma.SortOrder
   startup?: Prisma.SortOrderInput | Prisma.SortOrder
   stop?: Prisma.SortOrderInput | Prisma.SortOrder
   startup_done?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -432,9 +454,11 @@ export type ImagesScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
   author?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
   authorName?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
+  runtimeType?: Prisma.StringWithAggregatesFilter<"Images"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Images"> | Date | string
   meta?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
   dockerImages?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
+  lxcConfig?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
   startup?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
   stop?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
   startup_done?: Prisma.StringNullableWithAggregatesFilter<"Images"> | string | null
@@ -454,9 +478,11 @@ export type ImagesCreateInput = {
   description?: string | null
   author?: string | null
   authorName?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   meta?: string | null
   dockerImages?: string | null
+  lxcConfig?: string | null
   startup?: string | null
   stop?: string | null
   startup_done?: string | null
@@ -478,9 +504,11 @@ export type ImagesUncheckedCreateInput = {
   description?: string | null
   author?: string | null
   authorName?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   meta?: string | null
   dockerImages?: string | null
+  lxcConfig?: string | null
   startup?: string | null
   stop?: string | null
   startup_done?: string | null
@@ -501,9 +529,11 @@ export type ImagesUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meta?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dockerImages?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lxcConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stop?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup_done?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -525,9 +555,11 @@ export type ImagesUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meta?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dockerImages?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lxcConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stop?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup_done?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -549,9 +581,11 @@ export type ImagesCreateManyInput = {
   description?: string | null
   author?: string | null
   authorName?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   meta?: string | null
   dockerImages?: string | null
+  lxcConfig?: string | null
   startup?: string | null
   stop?: string | null
   startup_done?: string | null
@@ -571,9 +605,11 @@ export type ImagesUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meta?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dockerImages?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lxcConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stop?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup_done?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -594,9 +630,11 @@ export type ImagesUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meta?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dockerImages?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lxcConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stop?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup_done?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -622,9 +660,11 @@ export type ImagesCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   author?: Prisma.SortOrder
   authorName?: Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   meta?: Prisma.SortOrder
   dockerImages?: Prisma.SortOrder
+  lxcConfig?: Prisma.SortOrder
   startup?: Prisma.SortOrder
   stop?: Prisma.SortOrder
   startup_done?: Prisma.SortOrder
@@ -650,9 +690,11 @@ export type ImagesMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   author?: Prisma.SortOrder
   authorName?: Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   meta?: Prisma.SortOrder
   dockerImages?: Prisma.SortOrder
+  lxcConfig?: Prisma.SortOrder
   startup?: Prisma.SortOrder
   stop?: Prisma.SortOrder
   startup_done?: Prisma.SortOrder
@@ -673,9 +715,11 @@ export type ImagesMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   author?: Prisma.SortOrder
   authorName?: Prisma.SortOrder
+  runtimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   meta?: Prisma.SortOrder
   dockerImages?: Prisma.SortOrder
+  lxcConfig?: Prisma.SortOrder
   startup?: Prisma.SortOrder
   stop?: Prisma.SortOrder
   startup_done?: Prisma.SortOrder
@@ -714,9 +758,11 @@ export type ImagesCreateWithoutServersInput = {
   description?: string | null
   author?: string | null
   authorName?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   meta?: string | null
   dockerImages?: string | null
+  lxcConfig?: string | null
   startup?: string | null
   stop?: string | null
   startup_done?: string | null
@@ -737,9 +783,11 @@ export type ImagesUncheckedCreateWithoutServersInput = {
   description?: string | null
   author?: string | null
   authorName?: string | null
+  runtimeType?: string
   createdAt?: Date | string
   meta?: string | null
   dockerImages?: string | null
+  lxcConfig?: string | null
   startup?: string | null
   stop?: string | null
   startup_done?: string | null
@@ -775,9 +823,11 @@ export type ImagesUpdateWithoutServersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meta?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dockerImages?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lxcConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stop?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup_done?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -798,9 +848,11 @@ export type ImagesUncheckedUpdateWithoutServersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  runtimeType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meta?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dockerImages?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lxcConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stop?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startup_done?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -852,9 +904,11 @@ export type ImagesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   description?: boolean
   author?: boolean
   authorName?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   meta?: boolean
   dockerImages?: boolean
+  lxcConfig?: boolean
   startup?: boolean
   stop?: boolean
   startup_done?: boolean
@@ -877,9 +931,11 @@ export type ImagesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   author?: boolean
   authorName?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   meta?: boolean
   dockerImages?: boolean
+  lxcConfig?: boolean
   startup?: boolean
   stop?: boolean
   startup_done?: boolean
@@ -900,9 +956,11 @@ export type ImagesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   author?: boolean
   authorName?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   meta?: boolean
   dockerImages?: boolean
+  lxcConfig?: boolean
   startup?: boolean
   stop?: boolean
   startup_done?: boolean
@@ -923,9 +981,11 @@ export type ImagesSelectScalar = {
   description?: boolean
   author?: boolean
   authorName?: boolean
+  runtimeType?: boolean
   createdAt?: boolean
   meta?: boolean
   dockerImages?: boolean
+  lxcConfig?: boolean
   startup?: boolean
   stop?: boolean
   startup_done?: boolean
@@ -939,7 +999,7 @@ export type ImagesSelectScalar = {
   rejectionReason?: boolean
 }
 
-export type ImagesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "UUID" | "name" | "description" | "author" | "authorName" | "createdAt" | "meta" | "dockerImages" | "startup" | "stop" | "startup_done" | "config_files" | "info" | "scripts" | "variables" | "portRequirements" | "status" | "createdById" | "rejectionReason", ExtArgs["result"]["images"]>
+export type ImagesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "UUID" | "name" | "description" | "author" | "authorName" | "runtimeType" | "createdAt" | "meta" | "dockerImages" | "lxcConfig" | "startup" | "stop" | "startup_done" | "config_files" | "info" | "scripts" | "variables" | "portRequirements" | "status" | "createdById" | "rejectionReason", ExtArgs["result"]["images"]>
 export type ImagesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   servers?: boolean | Prisma.Images$serversArgs<ExtArgs>
   _count?: boolean | Prisma.ImagesCountOutputTypeDefaultArgs<ExtArgs>
@@ -959,9 +1019,11 @@ export type $ImagesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     description: string | null
     author: string | null
     authorName: string | null
+    runtimeType: string
     createdAt: Date
     meta: string | null
     dockerImages: string | null
+    lxcConfig: string | null
     startup: string | null
     stop: string | null
     startup_done: string | null
@@ -1403,9 +1465,11 @@ export interface ImagesFieldRefs {
   readonly description: Prisma.FieldRef<"Images", 'String'>
   readonly author: Prisma.FieldRef<"Images", 'String'>
   readonly authorName: Prisma.FieldRef<"Images", 'String'>
+  readonly runtimeType: Prisma.FieldRef<"Images", 'String'>
   readonly createdAt: Prisma.FieldRef<"Images", 'DateTime'>
   readonly meta: Prisma.FieldRef<"Images", 'String'>
   readonly dockerImages: Prisma.FieldRef<"Images", 'String'>
+  readonly lxcConfig: Prisma.FieldRef<"Images", 'String'>
   readonly startup: Prisma.FieldRef<"Images", 'String'>
   readonly stop: Prisma.FieldRef<"Images", 'String'>
   readonly startup_done: Prisma.FieldRef<"Images", 'String'>
