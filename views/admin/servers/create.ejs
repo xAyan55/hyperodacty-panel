@@ -381,7 +381,7 @@
       });
     }
 
-    document.getElementById('assignPortsBtn').addEventListener('click', renderPortRows);
+    document.getElementById('assignPortsBtn')?.addEventListener('click', renderPortRows);
 
     function updateDockerImages() {
       const selectedOption = serverImageSelect.options[serverImageSelect.selectedIndex];
@@ -509,10 +509,12 @@
 
     const allowStartupEditToggle = document.getElementById('allowStartupEdit');
     const allowStartupEditLabel  = document.getElementById('allowStartupEditLabel');
-    allowStartupEditToggle.addEventListener('change', function() { allowStartupEditLabel.textContent = this.checked ? 'Enabled' : 'Disabled'; });
+    if (allowStartupEditToggle && allowStartupEditLabel) {
+      allowStartupEditToggle.addEventListener('change', function() { allowStartupEditLabel.textContent = this.checked ? 'Enabled' : 'Disabled'; });
+    }
 
-    serverImageSelect.addEventListener('change', () => { updateDockerImages(); updateVariables(); ensureMinimumPortRows(); syncPortsButton(); });
-    serverNodeSelect.addEventListener('change', () => { updatePortsForSelectedNode(); });
+    serverImageSelect?.addEventListener('change', () => { updateDockerImages(); updateVariables(); ensureMinimumPortRows(); syncPortsButton(); });
+    serverNodeSelect?.addEventListener('change', () => { updatePortsForSelectedNode(); });
   });
 </script>
 <script nonce="<%- nonce %>">

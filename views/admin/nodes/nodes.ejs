@@ -356,9 +356,9 @@
     });
   }
 
-  document.getElementById('createLocationBtn').addEventListener('click', async () => {
-    const name = document.getElementById('locName').value.trim();
-    const shortCode = document.getElementById('locCode').value.trim().toLowerCase();
+  document.getElementById('createLocationBtn')?.addEventListener('click', async () => {
+    const name = document.getElementById('locName')?.value.trim();
+    const shortCode = document.getElementById('locCode')?.value.trim().toLowerCase();
     if (!name || !shortCode) { toast('Name and short code are required.', 'error'); return; }
 
     const r = await fetch('/admin/locations', {
@@ -375,7 +375,7 @@
     }
   });
 
-  document.getElementById('locationsList').addEventListener('click', (e) => {
+  document.getElementById('locationsList')?.addEventListener('click', (e) => {
     const btn = e.target.closest('.delete-location-btn');
     if (!btn) return;
     (async () => {

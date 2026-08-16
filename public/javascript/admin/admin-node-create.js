@@ -101,15 +101,16 @@
     document.querySelectorAll('#allocatedPortsList > div[data-port]').forEach(tag => { tag.style.opacity = '1'; tag.style.transform = ''; });
   }
 
-  document.getElementById('addPortBtn').addEventListener('click', () => {
-    const input = document.getElementById('newPortInput').value.trim();
+  document.getElementById('addPortBtn')?.addEventListener('click', () => {
+    const input = document.getElementById('newPortInput')?.value.trim();
     if (input) {
       addPort(input);
-      document.getElementById('newPortInput').value = '';
+      const portEl = document.getElementById('newPortInput');
+      if (portEl) portEl.value = '';
     }
   });
 
-  document.getElementById('newPortInput').addEventListener('keypress', (e) => {
+  document.getElementById('newPortInput')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const input = e.target.value.trim();
@@ -130,7 +131,7 @@
     return '';
   }
 
-  document.getElementById('createNodeBtn').addEventListener('click', async () => {
+  document.getElementById('createNodeBtn')?.addEventListener('click', async () => {
     const ramAll = document.getElementById('nodeRamAll').checked;
     const diskAll = document.getElementById('nodeDiskAll').checked;
     const cpuAll = document.getElementById('nodeProcessorAll').checked;
